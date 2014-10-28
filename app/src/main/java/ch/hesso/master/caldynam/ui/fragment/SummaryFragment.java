@@ -1,37 +1,41 @@
-package ch.hesso.master.caldynam;
+package ch.hesso.master.caldynam.ui.fragment;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import ch.hesso.master.caldynam.MainActivity;
+import ch.hesso.master.caldynam.R;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link MealLogging.OnFragmentInteractionListener} interface
+ * {@link SummaryFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link MealLogging#newInstance} factory method to
+ * Use the {@link SummaryFragment#newInstance} factory method to
  * create an instance of this fragment.
  *
  */
-public class MealLogging extends Fragment {
+public class SummaryFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment MealLogging.
+     * @return A new instance of fragment SummaryFragment.
      */
-    public static MealLogging newInstance() {
-        MealLogging fragment = new MealLogging();
+    public static SummaryFragment newInstance() {
+        SummaryFragment fragment = new SummaryFragment();
         return fragment;
     }
 
-    public MealLogging() {
+    public SummaryFragment() {
         // Required empty public constructor
     }
 
@@ -43,7 +47,7 @@ public class MealLogging extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_meal_logging, container, false);
+        return inflater.inflate(R.layout.fragment_summary, container, false);
     }
 
     @Override
@@ -57,13 +61,20 @@ public class MealLogging extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
 
-        ((MainActivity) activity).onSectionAttached(R.string.section_meal_logging);
+        ((MainActivity) activity).onSectionAttached(R.string.section_summary);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+    {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
     }
 
     /**

@@ -5,22 +5,23 @@ import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 
+import ch.hesso.master.caldynam.ui.fragment.FoodCatalogFragment;
+import ch.hesso.master.caldynam.ui.fragment.LoggingFragment;
+import ch.hesso.master.caldynam.ui.fragment.NavigationDrawerFragment;
+import ch.hesso.master.caldynam.ui.fragment.SummaryFragment;
+import ch.hesso.master.caldynam.ui.fragment.WeightMeasurementFragment;
 
 public class MainActivity extends Activity implements
         NavigationDrawerFragment.NavigationDrawerCallbacks,
         SummaryFragment.OnFragmentInteractionListener,
-        WeightMeasurement.OnFragmentInteractionListener,
-        MealLogging.OnFragmentInteractionListener,
-        FoodCatalog.OnFragmentInteractionListener {
+        WeightMeasurementFragment.OnFragmentInteractionListener,
+        LoggingFragment.OnFragmentInteractionListener,
+        FoodCatalogFragment.OnFragmentInteractionListener {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -59,15 +60,15 @@ public class MainActivity extends Activity implements
                 break;
 
             case 1:
-                fragment = WeightMeasurement.newInstance();
+                fragment = WeightMeasurementFragment.newInstance();
                 break;
 
             case 2:
-                fragment = MealLogging.newInstance();
+                fragment = LoggingFragment.newInstance();
                 break;
 
             case 3:
-                fragment = FoodCatalog.newInstance();
+                fragment = FoodCatalogFragment.newInstance();
                 break;
         }
 
