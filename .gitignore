@@ -31,3 +31,6 @@ proguard/
 
 # OS X
 .DS_Store
+
+# Database auto generated files
+app/src/main/java/ch/hesso/master/caldynam/database
