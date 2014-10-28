@@ -1,8 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="theme_default_primary">#ff00bcd4</color>
+    <color name="theme_default_primary_dark">#ff0096aa</color>
+
+    <color name="theme_default_accent_light">#ff00c6e0</color>
+    <color name="theme_default_accent">#ff00bcd4</color>
+    <color name="theme_default_accent_dark">#ff00b0c7</color>
+
+    <color name="theme_background">#fffafafa</color>
+
+    <declare-styleable name="BaseAppTheme">
+        <attr name="actionBarIconColor" format="color" />
+    </declare-styleable>
+
     <style name="AppTheme" parent="android:Theme.Material.Light">
-        <item name="android:colorPrimary">#00bcd4</item>
-        <item name="android:colorPrimaryDark">#0096aa</item>
-        <item name="android:colorAccent">#00bcd4</item>
+        <item name="android:colorPrimary">@color/theme_default_primary</item>
+        <item name="android:colorPrimaryDark">@color/theme_default_primary_dark</item>
+        <item name="android:colorAccent">@color/theme_default_accent</item>
+        <item name="android:colorControlHighlight">@color/theme_default_accent_dark</item>
+
+        <item name="android:colorBackground">@color/theme_background</item>
+        <item name="android:windowBackground">@color/theme_background</item>
+
+        <item name="actionBarIconColor">@android:color/white</item>
+
+        <item name="android:navigationBarColor">@android:color/black</item>
+
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+        <item name="android:windowAllowReturnTransitionOverlap">true</item>
     </style>
+
+    <style name="MainTheme" parent="AppTheme">
+        <item name="android:actionBarTheme">@style/MainActionBarThemeOverlay</item>
+        <item name="android:actionBarStyle">@style/MainActionBar</item>
+        <item name="android:windowActionBarOverlay">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="MainActionBar" parent="android:Widget.Material.Light.ActionBar">
+        <item name="android:background">?android:colorPrimary</item>
+        <item name="android:displayOptions">showTitle|homeAsUp</item>
+        <item name="android:titleTextStyle">@style/MainThemeActionBarTitleTextStyle</item>
+        <item name="android:actionButtonStyle">@style/ActionButtonStyle</item>
+    </style>
+
+    <style name="ActionButtonStyle" parent="android:Widget.Material.ActionButton">
+        <item name="android:actionMenuTextColor">@android:color/holo_red_dark</item>
+    </style>
+
+    <style name="MainActionBarThemeOverlay" parent="">
+        <item name="android:colorControlNormal">?actionBarIconColor</item>
+        <item name="android:colorControlHighlight">@color/theme_default_accent_light</item>
+    </style>
+
+    <style name="MainThemeActionBarTitleTextStyle" parent="@android:style/TextAppearance.Material.Widget.ActionBar.Title">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <!--
+        Food detail
+    -->
+
+    <style name="FoodDetailTheme" parent="MainTheme">
+        <item name="android:actionBarStyle">@style/FoodDetailActionBar</item>
+        <item name="android:windowActionBarOverlay">false</item>
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+
+    <style name="FoodDetailActionBar" parent="android:Widget.Material.Light.ActionBar">
+        <item name="android:background">@null</item>
+        <!--<item name="android:homeAsUpIndicator">@android:drawable/ic_menu_set_as</item>-->
+        <item name="android:displayOptions">homeAsUp</item>
+    </style>
+
 </resources>
+
