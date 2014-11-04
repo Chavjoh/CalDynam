@@ -1,10 +1,8 @@
 package ch.hesso.master.caldynam.ui.fragment;
 
 import android.app.Activity;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,6 +21,7 @@ import ch.hesso.master.caldynam.MainActivity;
 import ch.hesso.master.caldynam.R;
 import ch.hesso.master.caldynam.database.Weight;
 import ch.hesso.master.caldynam.repository.WeightRepository;
+import ch.hesso.master.caldynam.util.DateUtils;
 import ch.hesso.master.caldynam.util.ToastUtils;
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.Line;
@@ -44,6 +43,9 @@ import lecho.lib.hellocharts.view.LineChartView;
  */
 public class WeightMeasurementFragment extends Fragment {
 
+    private static final Integer MARGIN_AXIS_Y_TOP = 5;
+    private static final Integer MARGIN_AXIS_Y_BOTTOM = 5;
+
     private OnFragmentInteractionListener mListener;
 
     private int numberOfMeasure;
@@ -55,7 +57,9 @@ public class WeightMeasurementFragment extends Fragment {
     private LineChartView chart;
     private LineChartData data;
     private float maxWeight;
+    private float minWeight;
 
+    private TextView weightInformation;
     private Button weightSubmit;
     private EditText weightValue;
 
@@ -73,6 +77,7 @@ public class WeightMeasurementFragment extends Fragment {
         listPoint = new ArrayList<PointValue>();
         listLine = new ArrayList<Line>();
         maxWeight = 0;
+        minWeight = 0;
         numberOfMeasure = 10;
     }
 
@@ -96,10 +101,13 @@ public class WeightMeasurementFragment extends Fragment {
         initializeData();
         refreshData();
 
-        // Get the weight field
+        // Get information text view
+        weightInformation = (TextView) rootView.findViewById(R.id.information);
+
+        // Get weight field
         weightValue = (EditText) rootView.findViewById(R.id.weight);
 
-        // Get the button and add action listener
+        // Get button and add action listener
         weightSubmit = (Button) rootView.findViewById(R.id.submit);
         weightSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,10 +118,30 @@ public class WeightMeasurementFragment extends Fragment {
 
                 WeightRepository.insertOrUpdate(getActivity(), weight);
                 refreshData();
+                manageFormVisibility();
             }
         });
 
+        manageFormVisibility();
+
         return rootView;
+    }
+
+    /**
+     * Change visibility of form if user have already inserted his weight today
+     */
+    private void manageFormVisibility() {
+
+        if (WeightRepository.hasToday(getActivity())) {
+            weightValue.setVisibility(View.INVISIBLE);
+            weightSubmit.setVisibility(View.INVISIBLE);
+            weightInformation.setText(R.string.weight_already);
+        }
+        else {
+            weightValue.setVisibility(View.VISIBLE);
+            weightSubmit.setVisibility(View.VISIBLE);
+            weightInformation.setText(R.string.weight_insert);
+        }
     }
 
     private void configureChart() {
@@ -150,7 +178,10 @@ public class WeightMeasurementFragment extends Fragment {
 
         int i = numberOfMeasure - 1;
 
-        List<Weight> listWeight = WeightRepository.getAllLimit(getActivity(), 10);
+        List<Weight> listWeight = WeightRepository.getAllLimit(getActivity(), numberOfMeasure);
+
+        if (listWeight.size() == 0)
+            return;
 
         float sum = 0f;
 
@@ -159,6 +190,10 @@ public class WeightMeasurementFragment extends Fragment {
 
             if (currentWeight > maxWeight) {
                 maxWeight = currentWeight;
+            }
+
+            if (currentWeight < minWeight || minWeight == 0) {
+                minWeight = currentWeight;
             }
 
             sum += currentWeight;
@@ -170,12 +205,14 @@ public class WeightMeasurementFragment extends Fragment {
             PointValue currentPoint = listPoint.get(i);
             currentPoint.set(i, average);
             currentPoint.setTarget(i, weight.getWeight());
-            currentPoint.setLabel(weight.getDate().toString().toCharArray()); // TODO: Format
+            currentPoint.setLabel(DateUtils.dateHourToString(weight.getDate()).toCharArray());
             i--;
         }
 
         while (i >= 0) {
-            listPoint.get(i).set(i, average);
+            PointValue currentPoint = listPoint.get(i);
+            currentPoint.set(i, 0);
+            currentPoint.setTarget(i, 0);
             i--;
         }
 
@@ -186,9 +223,9 @@ public class WeightMeasurementFragment extends Fragment {
     private void configureViewport() {
         final Viewport v = new Viewport();
         v.left = 0;
-        v.bottom = 30;
+        v.bottom = minWeight - MARGIN_AXIS_Y_BOTTOM;
         v.right = listPoint.size() - 1;
-        v.top = maxWeight + 30;
+        v.top = maxWeight + MARGIN_AXIS_Y_TOP;
 
         chart.setMaximumViewport(v);
         chart.setCurrentViewport(v, false);
@@ -206,7 +243,11 @@ public class WeightMeasurementFragment extends Fragment {
 
         if (id == R.id.action_reset) {
             WeightRepository.deleteAll(getActivity());
+            refreshData();
+            manageFormVisibility();
+
             ToastUtils.toast(getActivity(), "All weight measure are deleted.");
+
             return true;
         }
 
@@ -233,6 +274,20 @@ public class WeightMeasurementFragment extends Fragment {
         mListener = null;
     }
 
+    private class ValueTouchListener implements LineChartView.LineChartOnValueTouchListener {
+
+        @Override
+        public void onValueTouched(int selectedLine, int selectedValue, PointValue value) {
+            ToastUtils.toast(getActivity(), new String(value.getLabel()) + " -> " + value.getY());
+        }
+
+        @Override
+        public void onNothingTouched() {
+            // Just do nothing
+        }
+
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -245,21 +300,6 @@ public class WeightMeasurementFragment extends Fragment {
      * </p>
      */
     public interface OnFragmentInteractionListener {
-
-    }
-
-    private class ValueTouchListener implements LineChartView.LineChartOnValueTouchListener {
-
-        @Override
-        public void onValueTouched(int selectedLine, int selectedValue, PointValue value) {
-            ToastUtils.toast(getActivity(), value.getLabel() + " : " + value.getY());
-
-        }
-
-        @Override
-        public void onNothingTouched() {
-            // Just do nothing
-        }
 
     }
 
