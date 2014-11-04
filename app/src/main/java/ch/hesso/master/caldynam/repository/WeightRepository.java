@@ -25,6 +25,14 @@ public class WeightRepository {
         getDAO(context).delete(get(context, id));
     }
 
+    public static void deleteAll(Context context) {
+        getDAO(context).deleteAll();
+    }
+
+    public static List<Weight> getAllLimit(Context context, int limit) {
+        return getDAO(context).queryBuilder().limit(limit).orderDesc(WeightDao.Properties.Date).list();
+    }
+
     public static List<Weight> getPeriod(Context context, Date start, Date end) {
         return getDAO(context).queryBuilder()
                 .where(WeightDao.Properties.Date.between(start, end))

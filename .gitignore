@@ -34,6 +34,3 @@ proguard/
 
 # Database auto generated files
 app/src/main/java/ch/hesso/master/caldynam/database
-
-# Submodules
-HelloCharts/

@@ -1,18 +1,29 @@
 package ch.hesso.master.caldynam.ui.fragment;
 
 import android.app.Activity;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import ch.hesso.master.caldynam.MainActivity;
 import ch.hesso.master.caldynam.R;
+import ch.hesso.master.caldynam.database.Weight;
+import ch.hesso.master.caldynam.repository.WeightRepository;
+import ch.hesso.master.caldynam.util.ToastUtils;
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.Line;
 import lecho.lib.hellocharts.model.LineChartData;
@@ -32,15 +43,24 @@ import lecho.lib.hellocharts.view.LineChartView;
  *
  */
 public class WeightMeasurementFragment extends Fragment {
+
     private OnFragmentInteractionListener mListener;
+
+    private int numberOfMeasure;
+
+    private List<PointValue> listPoint;
+    private List<Line> listLine;
+    private Line weightLine;
+
     private LineChartView chart;
     private LineChartData data;
-    private int numberOfLines = 1;
-    private int numberOfPoints = 12;
+    private float maxWeight;
+
+    private Button weightSubmit;
+    private EditText weightValue;
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
+     * Factory used to create a new instance of this fragment.
      *
      * @return A new instance of fragment WeightMeasurement.
      */
@@ -48,8 +68,12 @@ public class WeightMeasurementFragment extends Fragment {
         WeightMeasurementFragment fragment = new WeightMeasurementFragment();
         return fragment;
     }
+
     public WeightMeasurementFragment() {
-        // Required empty public constructor
+        listPoint = new ArrayList<PointValue>();
+        listLine = new ArrayList<Line>();
+        maxWeight = 0;
+        numberOfMeasure = 10;
     }
 
     @Override
@@ -62,58 +86,131 @@ public class WeightMeasurementFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_weight_measurement, container, false);
 
+        // Get the chart and configure it
         chart = (LineChartView) rootView.findViewById(R.id.chart);
         chart.setOnValueTouchListener(new ValueTouchListener());
-
-        generateData();
-        resetViewport();
-
-        // Disable viewport recalculations, see toggleCubic() method for more info.
         chart.setViewportCalculationEnabled(false);
+        chart.setZoomEnabled(false);
+
+        configureChart();
+        initializeData();
+        refreshData();
+
+        // Get the weight field
+        weightValue = (EditText) rootView.findViewById(R.id.weight);
+
+        // Get the button and add action listener
+        weightSubmit = (Button) rootView.findViewById(R.id.submit);
+        weightSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Weight weight = new Weight();
+                weight.setWeight(Float.valueOf(weightValue.getText().toString()));
+                weight.setDate(new Date());
+
+                WeightRepository.insertOrUpdate(getActivity(), weight);
+                refreshData();
+            }
+        });
 
         return rootView;
     }
 
-    private void generateData() {
+    private void configureChart() {
 
-        List<Line> lines = new ArrayList<Line>();
-        for (int i = 0; i < numberOfLines; ++i) {
+        weightLine = new Line(listPoint);
+        weightLine.setColor(Utils.COLORS[0]);
+        weightLine.setShape(ValueShape.CIRCLE);
+        weightLine.setCubic(false);
+        weightLine.setFilled(true);
+        weightLine.setHasLabels(true);
+        weightLine.setHasLabelsOnlyForSelected(true);
+        weightLine.setHasLines(true);
+        weightLine.setHasPoints(true);
+        listLine.add(weightLine);
 
-            List<PointValue> values = new ArrayList<PointValue>();
-            for (int j = 0; j < numberOfPoints; ++j) {
-                values.add(new PointValue(j, (float) (Math.random() * 20f) + 60f));
-            }
-
-            Line line = new Line(values);
-            line.setColor(Utils.COLORS[i]);
-            line.setShape(ValueShape.CIRCLE);
-            line.setCubic(false);
-            line.setFilled(true);
-            line.setHasLabels(true);
-            line.setHasLabelsOnlyForSelected(true);
-            line.setHasLines(true);
-            line.setHasPoints(true);
-            lines.add(line);
-        }
-
-        data = new LineChartData(lines);
+        data = new LineChartData(listLine);
 
         Axis axisY = new Axis().setHasLines(true);
         axisY.setName("Weight");
         data.setAxisXBottom(null);
         data.setAxisYLeft(axisY);
 
-        chart.setZoomEnabled(false);
         chart.setLineChartData(data);
     }
 
-    private void resetViewport() {
-        // Reset viewport height range to (0,100)
-        final Viewport v = new Viewport(chart.getMaximumViewport());
-        v.bottom = 0;
-        v.top += 30;
+    private void initializeData() {
+
+        for (int i = 0; i < numberOfMeasure; i++) {
+            listPoint.add(new PointValue(i, 0));
+        }
+    }
+
+    private void refreshData() {
+
+        int i = numberOfMeasure - 1;
+
+        List<Weight> listWeight = WeightRepository.getAllLimit(getActivity(), 10);
+
+        float sum = 0f;
+
+        for (Weight weight : listWeight) {
+            float currentWeight = weight.getWeight();
+
+            if (currentWeight > maxWeight) {
+                maxWeight = currentWeight;
+            }
+
+            sum += currentWeight;
+        }
+
+        float average = sum / listWeight.size();
+
+        for (Weight weight : listWeight) {
+            PointValue currentPoint = listPoint.get(i);
+            currentPoint.set(i, average);
+            currentPoint.setTarget(i, weight.getWeight());
+            currentPoint.setLabel(weight.getDate().toString().toCharArray()); // TODO: Format
+            i--;
+        }
+
+        while (i >= 0) {
+            listPoint.get(i).set(i, average);
+            i--;
+        }
+
+        configureViewport();
+        chart.startDataAnimation(700);
+    }
+
+    private void configureViewport() {
+        final Viewport v = new Viewport();
+        v.left = 0;
+        v.bottom = 30;
+        v.right = listPoint.size() - 1;
+        v.top = maxWeight + 30;
+
         chart.setMaximumViewport(v);
         chart.setCurrentViewport(v, false);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.weight, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_reset) {
+            WeightRepository.deleteAll(getActivity());
+            ToastUtils.toast(getActivity(), "All weight measure are deleted.");
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -155,13 +252,13 @@ public class WeightMeasurementFragment extends Fragment {
 
         @Override
         public void onValueTouched(int selectedLine, int selectedValue, PointValue value) {
-            Toast.makeText(getActivity(), "Selected: " + value, Toast.LENGTH_SHORT).show();
+            ToastUtils.toast(getActivity(), value.getLabel() + " : " + value.getY());
 
         }
 
         @Override
         public void onNothingTouched() {
-
+            // Just do nothing
         }
 
     }

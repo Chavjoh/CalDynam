@@ -23,6 +23,8 @@ public class MainActivity extends Activity implements
         LoggingFragment.OnFragmentInteractionListener,
         FoodCatalogFragment.OnFragmentInteractionListener {
 
+    private Fragment fragment = null;
+
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -52,7 +54,6 @@ public class MainActivity extends Activity implements
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getFragmentManager();
-        Fragment fragment = null;
 
         switch (position) {
             case 0:
@@ -95,6 +96,7 @@ public class MainActivity extends Activity implements
             // Only show items in the action bar relevant to this screen
             // if the drawer is not showing. Otherwise, let the drawer
             // decide what to show in the action bar.
+            fragment.onCreateOptionsMenu(menu, getMenuInflater());
             //getMenuInflater().inflate(R.menu.main, menu);
             restoreActionBar();
             return true;
@@ -114,6 +116,8 @@ public class MainActivity extends Activity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+
+        fragment.onOptionsItemSelected(item);
 
         if (id == R.id.action_settings) {
             return true;
