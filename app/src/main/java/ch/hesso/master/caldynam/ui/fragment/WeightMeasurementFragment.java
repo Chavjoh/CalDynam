@@ -6,9 +6,21 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import ch.hesso.master.caldynam.MainActivity;
 import ch.hesso.master.caldynam.R;
+import lecho.lib.hellocharts.model.Axis;
+import lecho.lib.hellocharts.model.Line;
+import lecho.lib.hellocharts.model.LineChartData;
+import lecho.lib.hellocharts.model.PointValue;
+import lecho.lib.hellocharts.model.ValueShape;
+import lecho.lib.hellocharts.model.Viewport;
+import lecho.lib.hellocharts.util.Utils;
+import lecho.lib.hellocharts.view.LineChartView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,6 +33,10 @@ import ch.hesso.master.caldynam.R;
  */
 public class WeightMeasurementFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
+    private LineChartView chart;
+    private LineChartData data;
+    private int numberOfLines = 1;
+    private int numberOfPoints = 12;
 
     /**
      * Use this factory method to create a new instance of
@@ -44,7 +60,60 @@ public class WeightMeasurementFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_weight_measurement, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_weight_measurement, container, false);
+
+        chart = (LineChartView) rootView.findViewById(R.id.chart);
+        chart.setOnValueTouchListener(new ValueTouchListener());
+
+        generateData();
+        resetViewport();
+
+        // Disable viewport recalculations, see toggleCubic() method for more info.
+        chart.setViewportCalculationEnabled(false);
+
+        return rootView;
+    }
+
+    private void generateData() {
+
+        List<Line> lines = new ArrayList<Line>();
+        for (int i = 0; i < numberOfLines; ++i) {
+
+            List<PointValue> values = new ArrayList<PointValue>();
+            for (int j = 0; j < numberOfPoints; ++j) {
+                values.add(new PointValue(j, (float) (Math.random() * 20f) + 60f));
+            }
+
+            Line line = new Line(values);
+            line.setColor(Utils.COLORS[i]);
+            line.setShape(ValueShape.CIRCLE);
+            line.setCubic(false);
+            line.setFilled(true);
+            line.setHasLabels(true);
+            line.setHasLabelsOnlyForSelected(true);
+            line.setHasLines(true);
+            line.setHasPoints(true);
+            lines.add(line);
+        }
+
+        data = new LineChartData(lines);
+
+        Axis axisY = new Axis().setHasLines(true);
+        axisY.setName("Weight");
+        data.setAxisXBottom(null);
+        data.setAxisYLeft(axisY);
+
+        chart.setZoomEnabled(false);
+        chart.setLineChartData(data);
+    }
+
+    private void resetViewport() {
+        // Reset viewport height range to (0,100)
+        final Viewport v = new Viewport(chart.getMaximumViewport());
+        v.bottom = 0;
+        v.top += 30;
+        chart.setMaximumViewport(v);
+        chart.setCurrentViewport(v, false);
     }
 
     @Override
@@ -79,6 +148,21 @@ public class WeightMeasurementFragment extends Fragment {
      * </p>
      */
     public interface OnFragmentInteractionListener {
+
+    }
+
+    private class ValueTouchListener implements LineChartView.LineChartOnValueTouchListener {
+
+        @Override
+        public void onValueTouched(int selectedLine, int selectedValue, PointValue value) {
+            Toast.makeText(getActivity(), "Selected: " + value, Toast.LENGTH_SHORT).show();
+
+        }
+
+        @Override
+        public void onNothingTouched() {
+
+        }
 
     }
 
