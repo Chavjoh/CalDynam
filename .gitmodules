@@ -1,0 +1,3 @@
+[submodule "HelloCharts"]
+	path = HelloCharts
+	url = https://github.com/lecho/hellocharts-android
