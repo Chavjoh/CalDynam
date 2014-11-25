@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "ch.hesso.master.caldynam"
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
@@ -24,4 +24,6 @@ dependencies {
     compile 'com.android.support:support-v4:21.+'
     compile "com.android.support:appcompat-v7:21.0.+"
     compile 'de.greenrobot:greendao:1.3.7'
+
+    compile project(':hellocharts-library')
 }

@@ -4,10 +4,47 @@
     android:layout_height="match_parent"
     tools:context="ch.hesso.master.caldynam.ui.fragment.WeightMeasurementFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/section_weight_measurement" />
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/weight_insert"
+            android:id="@+id/information"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp" />
+
+        <EditText
+            android:id="@+id/weight"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/information"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@+id/submit"
+            android:digits="0123456789."
+            android:inputType="numberDecimal"/>
+
+        <Button
+            android:id="@id/submit"
+            android:layout_width="96dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/information"
+            android:layout_alignParentEnd="true"
+            android:text="@string/submit"/>
+
+        <lecho.lib.hellocharts.view.LineChartView
+            android:id="@+id/chart"
+            android:layout_below="@id/submit"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp" />
+
+    </RelativeLayout>
 
 </FrameLayout>

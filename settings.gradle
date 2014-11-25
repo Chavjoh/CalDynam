@@ -1,1 +1,2 @@
-include ':app', ':MyDaoGenerator'
+include ':app', ':MyDaoGenerator', ':hellocharts-library'
+project(':hellocharts-library').projectDir = new File('HelloCharts/hellocharts-library')

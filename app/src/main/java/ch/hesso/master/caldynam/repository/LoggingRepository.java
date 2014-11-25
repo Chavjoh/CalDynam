@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 import ch.hesso.master.caldynam.CalDynamApplication;
-import ch.hesso.master.caldynam.database.FoodCategory;
-import ch.hesso.master.caldynam.database.FoodCategoryDao;
 import ch.hesso.master.caldynam.database.Logging;
 import ch.hesso.master.caldynam.database.LoggingDao;
 import ch.hesso.master.caldynam.util.DateUtils;
