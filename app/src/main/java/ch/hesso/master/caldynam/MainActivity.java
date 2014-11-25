@@ -16,7 +16,6 @@ import android.view.animation.Transformation;
 import android.widget.Toast;
 import 	android.support.v7.app.ActionBarActivity;
 
-import ch.hesso.master.caldynam.model.FragmentInfoHolder;
 import ch.hesso.master.caldynam.ui.fragment.FoodCatalogFragment;
 import ch.hesso.master.caldynam.ui.fragment.LoggingFragment;
 import ch.hesso.master.caldynam.ui.fragment.NavigationDrawerFragment;

@@ -1,8 +1,8 @@
 package ch.hesso.master.caldynam.ui.fragment;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
+import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -113,7 +113,7 @@ public class WeightMeasurementFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Weight weight = new Weight();
-                weight.setWeight(Float.valueOf(weightValue.getText().toString())); // TODO: filter, -> ""
+                weight.setWeight(Float.valueOf(weightValue.getText().toString()));
                 weight.setDate(new Date());
 
                 WeightRepository.insertOrUpdate(getActivity(), weight);
