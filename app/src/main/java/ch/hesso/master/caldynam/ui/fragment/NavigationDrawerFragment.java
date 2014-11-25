@@ -21,7 +21,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import ch.hesso.master.caldynam.MainActivity;
 import ch.hesso.master.caldynam.R;
+import ch.hesso.master.caldynam.model.FragmentInfoHolder;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -100,17 +102,12 @@ public class NavigationDrawerFragment extends Fragment {
             }
         });
 
-        mDrawerListView.setAdapter(new ArrayAdapter<String>(
+        mDrawerListView.setAdapter(new ArrayAdapter<FragmentInfoHolder>(
                 getActivity().getBaseContext(),
                 android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
-                new String[]{
-                        getString(R.string.section_summary),
-                        getString(R.string.section_weight_measurement),
-                        getString(R.string.section_meal_logging),
-                        getString(R.string.section_food_catalog),
-                }));
-
+                FragmentInfoHolder.FRAGMENT_INFO_HOLDERS
+        ));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
 
         return mDrawerListView;
@@ -151,7 +148,6 @@ public class NavigationDrawerFragment extends Fragment {
                 if (!isAdded()) {
                     return;
                 }
-
                 getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
             }
 
@@ -172,6 +168,30 @@ public class NavigationDrawerFragment extends Fragment {
                 }
 
                 getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
+            }
+
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                super.onDrawerSlide(drawerView, slideOffset);
+                View fab = getActivity().findViewById(R.id.fab_button);
+                if (FragmentInfoHolder.FRAGMENT_INFO_HOLDERS[mCurrentSelectedPosition].isFABVisible()) {
+                    fab.setAlpha(1.0f - slideOffset);
+                    fab.setX(
+                            getResources().getDimension(R.dimen.activity_horizontal_margin) +
+                            NavigationDrawerFragment.this.mFragmentContainerView.getLayoutParams().width * slideOffset
+                    );
+                }
+                else {
+                    fab.setAlpha(0.0f);
+                }
+                if (FragmentInfoHolder.FRAGMENT_INFO_HOLDERS[mCurrentSelectedPosition].isLargeToolbar()) {
+                    ((MainActivity)getActivity()).resizeToolbar(1.0f - slideOffset);
+                }
+                else {
+                    ((MainActivity)getActivity()).resizeToolbar(0.0f);
+                }
+
+
             }
         };
 
@@ -268,6 +288,14 @@ public class NavigationDrawerFragment extends Fragment {
 
     private Toolbar getToolbar() {
         return (Toolbar) getActivity().findViewById(R.id.toolbar);
+    }
+
+    public boolean isToolbarLarge() {
+        return !isDrawerOpen() && FragmentInfoHolder.FRAGMENT_INFO_HOLDERS[mCurrentSelectedPosition].isLargeToolbar();
+    }
+
+    public boolean isFABVisible() {
+        return !isDrawerOpen() && FragmentInfoHolder.FRAGMENT_INFO_HOLDERS[mCurrentSelectedPosition].isFABVisible();
     }
 
     /**

@@ -3,11 +3,13 @@
     <color name="theme_default_primary">#ff00bcd4</color>
     <color name="theme_default_primary_dark">#ff0096aa</color>
 
-    <color name="theme_default_accent_light">#ff00c6e0</color>
+    <color name="theme_default_accent_light">#ff00ffff</color>
     <color name="theme_default_accent">#ff00bcd4</color>
     <color name="theme_default_accent_dark">#ff00b0c7</color>
 
     <color name="theme_background">#fffafafa</color>
+
+    <color name="theme_darker_gray">#444</color>
 
     <declare-styleable name="BaseAppTheme">
         <attr name="actionBarIconColor" format="color" />
@@ -30,10 +32,22 @@
         <item name="android:navigationBarColor">@android:color/black</item>
 
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+
+        <item name="android:editTextColor">@null</item>
+        <item name="android:textColor">@color/theme_darker_gray</item>
     </style>
 
     <style name="MainTheme" parent="AppTheme">
         <item name="windowActionBarOverlay">false</item>
+    </style>
+
+    <style name="BaseTheme" parent="Theme.AppCompat">
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+    </style>
+
+    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@color/theme_darker_gray</item>
     </style>
 
     <!--
@@ -54,15 +68,4 @@
         <item name="displayOptions">homeAsUp</item>
     </style>
 
-
-
-
-<style name="BaseTheme" parent="Theme.AppCompat">
-    <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
-</style>
-
-<style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
-    <item name="spinBars">false</item>
-    <item name="color">@android:color/white</item>
-</style>
 </resources>

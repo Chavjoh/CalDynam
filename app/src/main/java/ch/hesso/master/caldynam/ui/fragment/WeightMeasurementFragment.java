@@ -113,7 +113,7 @@ public class WeightMeasurementFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Weight weight = new Weight();
-                weight.setWeight(Float.valueOf(weightValue.getText().toString()));
+                weight.setWeight(Float.valueOf(weightValue.getText().toString())); // TODO: filter, -> ""
                 weight.setDate(new Date());
 
                 WeightRepository.insertOrUpdate(getActivity(), weight);

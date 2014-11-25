@@ -7,9 +7,10 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?attr/actionBarSize"
         android:minHeight="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
+        android:paddingBottom="16dp"
         android:elevation="4dp"
         android:gravity="bottom"
         android:transitionName="actionBar" />
@@ -46,4 +47,24 @@
             tools:layout="@layout/fragment_navigation_drawer" />
 
     </android.support.v4.widget.DrawerLayout>
+
+    <ImageButton
+        android:id="@+id/fab_button"
+        android:transitionName="fab"
+        android:layout_below="@+id/toolbar"
+        android:layout_width="@dimen/fab_size"
+        android:layout_height="@dimen/fab_size"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/minus_fab_size_2"
+        android:layout_alignParentStart="true"
+        android:elevation="8dp"
+        android:padding="8dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_add_black_48dp"
+        android:tint="@color/theme_darker_gray"
+        android:background="@drawable/button_round"/>
 </RelativeLayout>
+    <!--
+        android:background="@drawable/button_round"
+        android:stateListAnimator="@anim/fab_anim"
+    -->
