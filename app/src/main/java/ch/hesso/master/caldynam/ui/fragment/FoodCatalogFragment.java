@@ -2,13 +2,23 @@ package ch.hesso.master.caldynam.ui.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+
+import java.util.List;
 
 import ch.hesso.master.caldynam.MainActivity;
 import ch.hesso.master.caldynam.R;
+import ch.hesso.master.caldynam.database.Food;
+import ch.hesso.master.caldynam.database.FoodCategory;
+import ch.hesso.master.caldynam.repository.FoodCategoryRepository;
+import ch.hesso.master.caldynam.repository.FoodRepository;
+import ch.hesso.master.caldynam.ui.adapter.FoodAdapter;
+import ch.hesso.master.caldynam.ui.adapter.FoodCategorySpinnerAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,6 +31,9 @@ import ch.hesso.master.caldynam.R;
  */
 public class FoodCatalogFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
+    private View mAddButton;
+    private FoodAdapter foodAdapter;
+    private ListView lvFood;
 
     /**
      * Use this factory method to create a new instance of
@@ -60,6 +73,37 @@ public class FoodCatalogFragment extends Fragment {
         }
 
         ((MainActivity) activity).onSectionAttached(R.string.section_food_catalog);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        mAddButton = ((MainActivity) getActivity()).getAddButton();
+
+        mAddButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.replace(R.id.container, new FoodAddFragment());
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        });
+
+        findViews();
+        initListView();
+    }
+
+    public void findViews() {
+        lvFood = (ListView) getActivity().findViewById(R.id.lv_food);
+    }
+
+    public void initListView() {
+        List<Food> listFood = FoodRepository.getAll(getActivity());
+        Food[] array = listFood.toArray(new Food[listFood.size()]);
+        foodAdapter = new FoodAdapter(getActivity(), array);
+        lvFood.setAdapter(foodAdapter);
     }
 
     @Override

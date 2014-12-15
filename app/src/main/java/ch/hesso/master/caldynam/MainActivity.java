@@ -6,6 +6,7 @@ import android.graphics.Outline;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,7 +17,9 @@ import android.view.animation.Transformation;
 import android.widget.Toast;
 import 	android.support.v7.app.ActionBarActivity;
 
+import ch.hesso.master.caldynam.ui.fragment.FoodAddFragment;
 import ch.hesso.master.caldynam.ui.fragment.FoodCatalogFragment;
+import ch.hesso.master.caldynam.ui.fragment.FoodViewFragment;
 import ch.hesso.master.caldynam.ui.fragment.LoggingFragment;
 import ch.hesso.master.caldynam.ui.fragment.NavigationDrawerFragment;
 import ch.hesso.master.caldynam.ui.fragment.SummaryFragment;
@@ -27,7 +30,9 @@ public class MainActivity extends ActionBarActivity implements
         SummaryFragment.OnFragmentInteractionListener,
         WeightMeasurementFragment.OnFragmentInteractionListener,
         LoggingFragment.OnFragmentInteractionListener,
-        FoodCatalogFragment.OnFragmentInteractionListener {
+        FoodCatalogFragment.OnFragmentInteractionListener,
+        FoodAddFragment.OnFragmentInteractionListener,
+        FoodViewFragment.OnFragmentInteractionListener {
 
     private Fragment fragment = null;
 
@@ -165,12 +170,28 @@ public class MainActivity extends ActionBarActivity implements
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed(){
+        FragmentManager fm = getFragmentManager();
+        if (fm.getBackStackEntryCount() > 0) {
+            Log.i("MainActivity", "Popping backstack");
+            fm.popBackStack();
+        } else {
+            Log.i("MainActivity", "Nothing on backstack, calling super");
+            super.onBackPressed();
+        }
+    }
+
     public void resizeToolbar(float offset) {
         float minSize = mToolbar.getMinimumHeight();
         float maxSize = getResources().getDimension(R.dimen.toolbar_height_large);
         ViewGroup.LayoutParams layout = mToolbar.getLayoutParams();
         layout.height = (int) (minSize + (maxSize - minSize) * offset);
         mToolbar.requestLayout();
+    }
+
+    public View getAddButton() {
+        return mFabButton;
     }
 
 

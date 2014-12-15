@@ -6,14 +6,13 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-public class DateUtils {
+import ch.hesso.master.caldynam.Constants;
 
-    public static final Locale LOCALE = new Locale("fr", "CH");
-    public static final TimeZone TIMEZONE = TimeZone.getTimeZone("Europe/Zurich");
+public class DateUtils {
 
     public static Date endOfDay(Date date) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeZone(TIMEZONE);
+        calendar.setTimeZone(Constants.TIMEZONE);
         calendar.setTime(date);
         calendar.set(Calendar.HOUR_OF_DAY, 23);
         calendar.set(Calendar.MINUTE, 59);
@@ -24,7 +23,7 @@ public class DateUtils {
 
     public static Date startOfDay(Date date) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeZone(TIMEZONE);
+        calendar.setTimeZone(Constants.TIMEZONE);
         calendar.setTime(date);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
@@ -36,8 +35,8 @@ public class DateUtils {
     public static boolean sameDay(Date date1, Date date2) {
         Calendar cal1 = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();
-        cal1.setTimeZone(TIMEZONE);
-        cal2.setTimeZone(TIMEZONE);
+        cal1.setTimeZone(Constants.TIMEZONE);
+        cal2.setTimeZone(Constants.TIMEZONE);
         cal1.setTime(date1);
         cal2.setTime(date2);
         return  cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
@@ -45,17 +44,17 @@ public class DateUtils {
     }
 
     public static String dateToString(Date date) {
-        return dateToString("dd.MM.yyyy", date);
+        return dateToString(Constants.DATE_FORMAT, date);
     }
 
     public static String dateToString(String pattern, Date date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat();
-        dateFormat.setTimeZone(TIMEZONE);
+        dateFormat.setTimeZone(Constants.TIMEZONE);
         dateFormat.applyPattern(pattern);
         return dateFormat.format(date);
     }
 
     public static String dateHourToString(Date date) {
-        return dateToString("dd.MM.yyyy HH:mm", date);
+        return dateToString(Constants.DATE_HOUR_FORMAT, date);
     }
 }

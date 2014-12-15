@@ -12,7 +12,7 @@ public class FragmentInfoHolder {
             new FragmentInfoHolder(CalDynamApplication.getAppContext().getString(R.string.section_summary), false, false),
             new FragmentInfoHolder(CalDynamApplication.getAppContext().getString(R.string.section_weight_measurement), false, false),
             new FragmentInfoHolder(CalDynamApplication.getAppContext().getString(R.string.section_meal_logging), true, true),
-            new FragmentInfoHolder(CalDynamApplication.getAppContext().getString(R.string.section_food_catalog), true, false), // TODO: random values
+            new FragmentInfoHolder(CalDynamApplication.getAppContext().getString(R.string.section_food_catalog), true, true), // TODO: random values
     };
 
     private String mName;

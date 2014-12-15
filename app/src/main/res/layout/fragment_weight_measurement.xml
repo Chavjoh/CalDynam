@@ -35,7 +35,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/information"
             android:layout_alignParentEnd="true"
-            android:text="@string/submit"/>
+            android:text="@string/submit"
+            android:textColor="#FFFFFF" />
 
         <lecho.lib.hellocharts.view.LineChartView
             android:id="@+id/chart"
