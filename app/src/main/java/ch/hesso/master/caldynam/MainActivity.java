@@ -2,9 +2,11 @@ package ch.hesso.master.caldynam;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.graphics.Outline;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -15,7 +17,6 @@ import android.view.ViewOutlineProvider;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.Toast;
-import 	android.support.v7.app.ActionBarActivity;
 
 import ch.hesso.master.caldynam.ui.fragment.FoodAddFragment;
 import ch.hesso.master.caldynam.ui.fragment.FoodCatalogFragment;
@@ -89,8 +90,6 @@ public class MainActivity extends ActionBarActivity implements
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        // update the main content by replacing fragments
-        FragmentManager fragmentManager = getFragmentManager();
 
         switch (position) {
             case 0:
@@ -110,10 +109,7 @@ public class MainActivity extends ActionBarActivity implements
                 break;
         }
 
-        fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
-
-        // Replace current menu with the fragment menu
-        this.invalidateOptionsMenu();
+        loadFragment(fragment);
     }
 
     View.OnClickListener fabClickListener = new View.OnClickListener() {
@@ -174,12 +170,38 @@ public class MainActivity extends ActionBarActivity implements
     public void onBackPressed(){
         FragmentManager fm = getFragmentManager();
         if (fm.getBackStackEntryCount() > 0) {
-            Log.i("MainActivity", "Popping backstack");
-            fm.popBackStack();
+            Log.d(Constants.PROJECT_NAME, "Popping backstack");
+            fm.popBackStackImmediate();
+            this.fragment = getActiveFragment();
         } else {
-            Log.i("MainActivity", "Nothing on backstack, calling super");
+            Log.d(Constants.PROJECT_NAME, "Nothing on backstack, calling super");
             super.onBackPressed();
         }
+    }
+
+    public Fragment getActiveFragment() {
+        if (getFragmentManager().getBackStackEntryCount() == 0) {
+            return null;
+        }
+        String tag = getFragmentManager()
+                .getBackStackEntryAt(getFragmentManager().getBackStackEntryCount() - 1)
+                .getName();
+        return getFragmentManager().findFragmentByTag(tag);
+    }
+
+    public void loadFragment(Fragment fragment) {
+        this.fragment = fragment;
+
+        String tag = fragment.getClass().getSimpleName();
+
+        final FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.replace(R.id.container, this.fragment, tag);
+        Log.d("Fragment", tag);
+        ft.addToBackStack(tag);
+        ft.commit();
+
+        // Replace current menu with the fragment menu
+        this.invalidateOptionsMenu();
     }
 
     public void resizeToolbar(float offset) {

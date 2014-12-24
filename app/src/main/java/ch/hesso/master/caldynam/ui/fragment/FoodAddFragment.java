@@ -1,14 +1,11 @@
 package ch.hesso.master.caldynam.ui.fragment;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.content.Intent;
-import android.net.Uri;
-import android.opengl.Visibility;
-import android.os.Bundle;
 import android.app.Fragment;
-import android.os.Environment;
-import android.provider.MediaStore;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +15,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,26 +23,27 @@ import java.util.List;
 
 import ch.hesso.master.caldynam.Constants;
 import ch.hesso.master.caldynam.IntentTag;
+import ch.hesso.master.caldynam.MainActivity;
 import ch.hesso.master.caldynam.R;
 import ch.hesso.master.caldynam.database.Food;
 import ch.hesso.master.caldynam.database.FoodCategory;
 import ch.hesso.master.caldynam.repository.FoodCategoryRepository;
 import ch.hesso.master.caldynam.repository.FoodRepository;
 import ch.hesso.master.caldynam.ui.adapter.FoodCategorySpinnerAdapter;
-import ch.hesso.master.caldynam.ui.callback.ActivityResultCallback;
-import ch.hesso.master.caldynam.ui.callback.ActivityResultManager;
 import ch.hesso.master.caldynam.util.DialogUtils;
 
 public class FoodAddFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     private String localPicturePath = "";
+    private String localThumbPicturePath = "";
     private FoodCategorySpinnerAdapter spinnerAdapter;
     private Spinner spCategory;
     private EditText etTitle;
     private EditText etCalorie;
     private Button btnImage;
     private Button btnSubmit;
+    private boolean isSaved;
 
     /**
      * Use this factory method to create a new instance of
@@ -75,8 +74,72 @@ public class FoodAddFragment extends Fragment {
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (IntentTag.fromValue(requestCode)) {
+            case TAKE_PICTURE:
+                if (resultCode == getActivity().RESULT_OK) {
+
+                    Bitmap photo = (Bitmap) data.getExtras().get("data");
+                    saveImage(photo);
+
+                    btnImage.setVisibility(View.INVISIBLE);
+
+                } else {
+                    localPicturePath = "";
+                    localThumbPicturePath = "";
+                }
+
+                break;
+        }
+    }
+
+    private void saveImage(Bitmap bitmap) {
+
+        String dateString = (new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss-SSSZ").format(new Date()));
+        localPicturePath = dateString + Constants.IMAGE_FORMAT;
+        localThumbPicturePath = dateString + Constants.THUMBNAIL_SUFFIX + Constants.IMAGE_FORMAT;
+
+        File fullPictureFile = new File(getActivity().getFilesDir(), localPicturePath);
+        File thumbPictureFile = new File(getActivity().getFilesDir(), localThumbPicturePath);
+
+        Bitmap thumbBitmap = ThumbnailUtils.extractThumbnail(bitmap, 128, 128);
+
+        saveImage(fullPictureFile, bitmap);
+        saveImage(thumbPictureFile, thumbBitmap);
+    }
+
+    private void saveImage(File file, Bitmap image) {
+        try {
+            file.createNewFile();
+            FileOutputStream fos = new FileOutputStream(file);
+            image.compress(Bitmap.CompressFormat.JPEG, 80, fos);
+            fos.close();
+        } catch (IOException e) {
+            Log.d(Constants.PROJECT_NAME, e.toString());
+        }
+    }
+
+    private void deleteImage() {
+        if (!localPicturePath.isEmpty() && !localThumbPicturePath.isEmpty()) {
+            File fullPictureFile = new File(getActivity().getFilesDir(), localPicturePath);
+            File thumbPictureFile = new File(getActivity().getFilesDir(), localThumbPicturePath);
+
+            if (fullPictureFile.exists()) {
+                fullPictureFile.delete();
+            }
+
+            if (thumbPictureFile.exists()) {
+                thumbPictureFile.delete();
+            }
+        }
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         findViews();
         initSpinner();
         initImageButton();
@@ -86,12 +149,22 @@ public class FoodAddFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
+        isSaved = false;
+
         try {
             mListener = (OnFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        ((MainActivity)getActivity()).getAddButton().setVisibility(View.INVISIBLE);
     }
 
     public void findViews() {
@@ -110,40 +183,12 @@ public class FoodAddFragment extends Fragment {
     }
 
     public void initImageButton() {
-        final String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/" + Constants.PROJECT_NAME + "/";
-        File directory = new File(path);
-        directory.mkdirs();
-
-        ActivityResultCallback callback = new ActivityResultCallback() {
-            @Override
-            public void onResult(int requestCode, int resultCode, Intent data) {
-                if (resultCode == getActivity().RESULT_OK) {
-                    btnImage.setVisibility(View.INVISIBLE);
-                } else {
-                    localPicturePath = "";
-                }
-            }
-        };
-
-        ActivityResultManager.registerCallback(IntentTag.TAKE_PICTURE, callback);
 
         btnImage.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                localPicturePath = path + (new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss-SSSZ").format(new Date())) + ".jpg";
-
-                File fileImage = new File(localPicturePath);
-                try {
-                    fileImage.createNewFile();
-                } catch (IOException e) {
-                    Log.d(Constants.PROJECT_NAME, e.toString());
-                }
-
-                Uri outputFileUri = Uri.fromFile(fileImage);
-
-                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(cameraIntent, IntentTag.TAKE_PICTURE.getValue());
             }
 
@@ -160,12 +205,15 @@ public class FoodAddFragment extends Fragment {
                 String calorie = etCalorie.getText().toString();
                 FoodCategory category = (FoodCategory) spCategory.getSelectedItem();
 
-                if (title.isEmpty() || calorie.isEmpty() || localPicturePath.isEmpty()) {
+                if (title.isEmpty() || calorie.isEmpty() || localThumbPicturePath.isEmpty()) {
                     DialogUtils.show(getActivity(), "Please enter the title, calorie number and select a picture.");
                 } else {
                     // Save new food
-                    Food food = new Food(null, title, category.getId(), Integer.parseInt(calorie), localPicturePath, "");
+                    Food food = new Food(null, title, category.getId(), Integer.parseInt(calorie), localThumbPicturePath, "");
                     FoodRepository.insertOrUpdate(getActivity(), food);
+
+                    // Indicate we saved the food
+                    isSaved = true;
 
                     // Go back
                     getActivity().getFragmentManager().beginTransaction().remove(FoodAddFragment.this).commit();
@@ -178,9 +226,12 @@ public class FoodAddFragment extends Fragment {
 
     @Override
     public void onDetach() {
-        super.onDetach();
 
-        ActivityResultManager.unregisterCallback(IntentTag.TAKE_PICTURE);
+        if (!isSaved) {
+            deleteImage();
+        }
+
+        super.onDetach();
     }
 
     /**

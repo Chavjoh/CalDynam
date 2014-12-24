@@ -11,7 +11,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginEnd="6dip"
         android:src="@drawable/ic_launcher"
-        android:contentDescription="Image" />
+        android:contentDescription="Image"/>
 
     <TextView
         android:id="@+id/tv_description"

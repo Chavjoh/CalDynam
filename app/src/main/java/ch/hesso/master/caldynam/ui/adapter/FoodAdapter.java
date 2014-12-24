@@ -3,8 +3,6 @@ package ch.hesso.master.caldynam.ui.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.media.ThumbnailUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +14,7 @@ import java.io.File;
 
 import ch.hesso.master.caldynam.R;
 import ch.hesso.master.caldynam.database.Food;
+import ch.hesso.master.caldynam.util.ImageUtils;
 
 public class FoodAdapter extends ArrayAdapter<Food> {
     private final Context context;
@@ -38,13 +37,13 @@ public class FoodAdapter extends ArrayAdapter<Food> {
 
         Food food = values[position];
         tvTitle.setText(food.getName());
-        tvDescription.setText(food.getCalorie() + " Calories");
+        tvDescription.setText(food.getCalorie() + " calories");
 
-        File imgFile = new  File(food.getImage());
+        File imgFile = new File(context.getFilesDir(), food.getImage());
 
-        if (imgFile.exists()){
-            Bitmap thumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(imgFile.getAbsolutePath()), 128, 128);
-            ivIcon.setImageBitmap(thumbImage);
+        if (imgFile.exists()) {
+            Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+            ivIcon.setImageBitmap(ImageUtils.getRoundedCornerBitmap(bitmap, 64));
         }
 
         return rowView;

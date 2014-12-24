@@ -11,4 +11,7 @@ public class Constants {
     public static final String DATE_HOUR_FORMAT = "dd.MM.yyyy HH:mm";
 
     public static final String PROJECT_NAME = "CalDynam";
+
+    public static final String THUMBNAIL_SUFFIX = "-min";
+    public static final String IMAGE_FORMAT = ".jpg";
 }

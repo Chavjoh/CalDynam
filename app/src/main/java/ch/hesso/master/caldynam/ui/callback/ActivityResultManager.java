@@ -18,8 +18,8 @@ public class ActivityResultManager {
         MAP.put(tag, callback);
     }
 
-    public static void execute(IntentTag tag, int requestCode, int resultCode, Intent data) {
-        ActivityResultCallback callback = MAP.get(tag);
+    public static void execute(int requestCode, int resultCode, Intent data) {
+        ActivityResultCallback callback = MAP.get(IntentTag.valueOf(String.valueOf(requestCode)));
 
         if (callback != null) {
             callback.onResult(requestCode, resultCode, data);

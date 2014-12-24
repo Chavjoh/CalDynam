@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.List;
@@ -85,7 +87,7 @@ public class FoodCatalogFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 final FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.replace(R.id.container, new FoodAddFragment());
+                ft.replace(R.id.container, FoodAddFragment.newInstance());
                 ft.addToBackStack(null);
                 ft.commit();
             }
@@ -104,6 +106,26 @@ public class FoodCatalogFragment extends Fragment {
         Food[] array = listFood.toArray(new Food[listFood.size()]);
         foodAdapter = new FoodAdapter(getActivity(), array);
         lvFood.setAdapter(foodAdapter);
+        lvFood.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Food food = (Food) lvFood.getItemAtPosition(position);
+                Fragment fragment = FoodViewFragment.newInstance(food.getId());
+                ((MainActivity) getActivity()).loadFragment(fragment);
+                /*
+                final FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.replace(R.id.container, ));
+                ft.addToBackStack(null);
+                ft.commit();*/
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        ((MainActivity)getActivity()).getAddButton().setVisibility(View.VISIBLE);
     }
 
     @Override
