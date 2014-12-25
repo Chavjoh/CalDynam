@@ -21,7 +21,7 @@
     <string name="title_activity_about">AboutActivity</string>
     <string name="food_name">NAME</string>
     <string name="food_category">CATEGORY</string>
-    <string name="food_calorie">CALORIE</string>
+    <string name="food_calorie">CALORIES</string>
     <string name="food_delete">Delete</string>
     <string name="delete_confirmation_food">Are you sure to want to delete this food from catalog ?</string>
     <string name="delete_confirmation_title">Confirmation</string>

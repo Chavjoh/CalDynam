@@ -35,6 +35,7 @@ import ch.hesso.master.caldynam.repository.FoodRepository;
 import ch.hesso.master.caldynam.ui.adapter.FoodCategorySpinnerAdapter;
 import ch.hesso.master.caldynam.util.DialogUtils;
 import ch.hesso.master.caldynam.util.ImageUtils;
+import ch.hesso.master.caldynam.util.LayoutUtils;
 
 public class FoodAddFragment extends Fragment {
 
@@ -182,20 +183,19 @@ public class FoodAddFragment extends Fragment {
     }
 
     public void findViews() {
-        etTitle = (EditText) getView().findViewById(R.id.et_title);
-        etCalorie = (EditText) getView().findViewById(R.id.et_calorie);
-        spCategory = (Spinner) getView().findViewById(R.id.sp_category);
-        btnImage = (Button) getView().findViewById(R.id.btn_image);
-        ivImage = (ImageView) getView().findViewById(R.id.iv_image);
-        trImage = (TableRow) getView().findViewById(R.id.tr_image);
-        rlImagePreview = (RelativeLayout) getView().findViewById(R.id.rl_image_preview);
-        btnSubmit = (Button) getView().findViewById(R.id.btn_submit);
+        etTitle = LayoutUtils.findView(getView(), R.id.et_title);
+        etCalorie = LayoutUtils.findView(getView(), R.id.et_calorie);
+        spCategory = LayoutUtils.findView(getView(), R.id.sp_category);
+        btnImage = LayoutUtils.findView(getView(), R.id.btn_image);
+        trImage = LayoutUtils.findView(getView(), R.id.tr_image);
+        rlImagePreview = LayoutUtils.findView(getView(), R.id.rl_image_preview);
+        ivImage = LayoutUtils.findView(getView(), R.id.iv_image);
+        btnSubmit = LayoutUtils.findView(getView(), R.id.btn_submit);
     }
 
     public void initSpinner() {
         List<FoodCategory> listFoodCategory = FoodCategoryRepository.getAll(getActivity());
-        FoodCategory[] array = listFoodCategory.toArray(new FoodCategory[listFoodCategory.size()]);
-        spinnerAdapter = new FoodCategorySpinnerAdapter(getActivity(), array);
+        spinnerAdapter = new FoodCategorySpinnerAdapter(getActivity(), listFoodCategory);
         spCategory.setAdapter(spinnerAdapter);
     }
 
@@ -220,6 +220,7 @@ public class FoodAddFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
+
                 String title = etTitle.getText().toString();
                 String calorie = etCalorie.getText().toString();
                 FoodCategory category = (FoodCategory) spCategory.getSelectedItem();
@@ -235,7 +236,7 @@ public class FoodAddFragment extends Fragment {
                     isSaved = true;
 
                     // Go back
-                    getActivity().getFragmentManager().beginTransaction().remove(FoodAddFragment.this).commit();
+                    getFragmentManager().popBackStack();
                 }
 
             }
@@ -260,8 +261,8 @@ public class FoodAddFragment extends Fragment {
      * activity.
      * <p/>
      * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * "http://developer.android.com/training/basics/fragments/communicating.html">
+     * Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
 

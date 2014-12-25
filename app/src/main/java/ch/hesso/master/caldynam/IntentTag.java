@@ -18,8 +18,7 @@ public enum IntentTag {
         return this.value == value;
     }
 
-    public static IntentTag fromValue(int value)
-    {
+    public static IntentTag fromValue(int value) {
         IntentTag[] tagArray = IntentTag.values();
 
         for (int i = 0; i < tagArray.length; i++) {
