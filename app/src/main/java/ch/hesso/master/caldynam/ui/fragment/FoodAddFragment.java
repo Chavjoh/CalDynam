@@ -12,7 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TableRow;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,6 +34,7 @@ import ch.hesso.master.caldynam.repository.FoodCategoryRepository;
 import ch.hesso.master.caldynam.repository.FoodRepository;
 import ch.hesso.master.caldynam.ui.adapter.FoodCategorySpinnerAdapter;
 import ch.hesso.master.caldynam.util.DialogUtils;
+import ch.hesso.master.caldynam.util.ImageUtils;
 
 public class FoodAddFragment extends Fragment {
 
@@ -43,6 +47,9 @@ public class FoodAddFragment extends Fragment {
     private EditText etCalorie;
     private Button btnImage;
     private Button btnSubmit;
+    private ImageView ivImage;
+    private TableRow trImage;
+    private RelativeLayout rlImagePreview;
     private boolean isSaved;
 
     /**
@@ -82,9 +89,12 @@ public class FoodAddFragment extends Fragment {
                 if (resultCode == getActivity().RESULT_OK) {
 
                     Bitmap photo = (Bitmap) data.getExtras().get("data");
-                    saveImage(photo);
+                    Bitmap thumb = saveImage(photo);
 
-                    btnImage.setVisibility(View.INVISIBLE);
+                    ivImage.setImageBitmap(ImageUtils.getRoundedCornerBitmap(thumb, 64));
+
+                    trImage.setVisibility(View.INVISIBLE);
+                    rlImagePreview.setVisibility(View.VISIBLE);
 
                 } else {
                     localPicturePath = "";
@@ -95,7 +105,7 @@ public class FoodAddFragment extends Fragment {
         }
     }
 
-    private void saveImage(Bitmap bitmap) {
+    private Bitmap saveImage(Bitmap bitmap) {
 
         String dateString = (new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss-SSSZ").format(new Date()));
         localPicturePath = dateString + Constants.IMAGE_FORMAT;
@@ -108,6 +118,8 @@ public class FoodAddFragment extends Fragment {
 
         saveImage(fullPictureFile, bitmap);
         saveImage(thumbPictureFile, thumbBitmap);
+
+        return thumbBitmap;
     }
 
     private void saveImage(File file, Bitmap image) {
@@ -133,6 +145,8 @@ public class FoodAddFragment extends Fragment {
             if (thumbPictureFile.exists()) {
                 thumbPictureFile.delete();
             }
+
+            Log.d("Add food", "Clean temporary picture");
         }
     }
 
@@ -172,6 +186,9 @@ public class FoodAddFragment extends Fragment {
         etCalorie = (EditText) getView().findViewById(R.id.et_calorie);
         spCategory = (Spinner) getView().findViewById(R.id.sp_category);
         btnImage = (Button) getView().findViewById(R.id.btn_image);
+        ivImage = (ImageView) getView().findViewById(R.id.iv_image);
+        trImage = (TableRow) getView().findViewById(R.id.tr_image);
+        rlImagePreview = (RelativeLayout) getView().findViewById(R.id.rl_image_preview);
         btnSubmit = (Button) getView().findViewById(R.id.btn_submit);
     }
 
@@ -193,6 +210,8 @@ public class FoodAddFragment extends Fragment {
             }
 
         });
+
+        rlImagePreview.setVisibility(View.INVISIBLE);
     }
 
     public void initSubmitButton() {

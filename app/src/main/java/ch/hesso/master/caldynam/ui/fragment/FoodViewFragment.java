@@ -160,7 +160,6 @@ public class FoodViewFragment extends Fragment {
         super.onResume();
 
         ((MainActivity)getActivity()).getAddButton().setVisibility(View.INVISIBLE);
-        Log.d("", "ActionBar ? " + (((MainActivity) getActivity()).getActionBar() != null));
     }
 
     @Override

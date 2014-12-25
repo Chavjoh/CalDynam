@@ -109,7 +109,7 @@ public class MainActivity extends ActionBarActivity implements
                 break;
         }
 
-        loadFragment(fragment);
+        loadFragment(fragment, false);
     }
 
     View.OnClickListener fabClickListener = new View.OnClickListener() {
@@ -190,14 +190,22 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     public void loadFragment(Fragment fragment) {
+        loadFragment(fragment, true);
+    }
+
+    public void loadFragment(Fragment fragment, boolean addToBackStack) {
         this.fragment = fragment;
 
         String tag = fragment.getClass().getSimpleName();
 
         final FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.replace(R.id.container, this.fragment, tag);
-        Log.d("Fragment", tag);
-        ft.addToBackStack(tag);
+
+        if (addToBackStack) {
+            Log.d("Fragment", tag);
+            ft.addToBackStack(tag);
+        }
+
         ft.commit();
 
         // Replace current menu with the fragment menu

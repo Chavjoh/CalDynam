@@ -1,6 +1,7 @@
 package ch.hesso.master.caldynam.ui.fragment;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -161,6 +162,7 @@ public class WeightMeasurementFragment extends Fragment {
 
         Axis axisY = new Axis().setHasLines(true);
         axisY.setName("Weight");
+        axisY.setTextColor(Color.BLACK);
         data.setAxisXBottom(null);
         data.setAxisYLeft(axisY);
 
@@ -269,6 +271,13 @@ public class WeightMeasurementFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        ((MainActivity)getActivity()).getAddButton().setVisibility(View.INVISIBLE);
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
@@ -283,7 +292,7 @@ public class WeightMeasurementFragment extends Fragment {
 
         @Override
         public void onNothingTouched() {
-            // Just do nothing
+            // Nothing to do
         }
 
     }

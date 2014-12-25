@@ -86,10 +86,8 @@ public class FoodCatalogFragment extends Fragment {
         mAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.replace(R.id.container, FoodAddFragment.newInstance());
-                ft.addToBackStack(null);
-                ft.commit();
+                Fragment fragment = FoodAddFragment.newInstance();
+                ((MainActivity) getActivity()).loadFragment(fragment);
             }
         });
 
@@ -112,11 +110,6 @@ public class FoodCatalogFragment extends Fragment {
                 Food food = (Food) lvFood.getItemAtPosition(position);
                 Fragment fragment = FoodViewFragment.newInstance(food.getId());
                 ((MainActivity) getActivity()).loadFragment(fragment);
-                /*
-                final FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.replace(R.id.container, ));
-                ft.addToBackStack(null);
-                ft.commit();*/
             }
         });
     }
