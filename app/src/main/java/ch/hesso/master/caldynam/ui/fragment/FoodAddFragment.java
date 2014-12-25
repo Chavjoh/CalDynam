@@ -194,8 +194,7 @@ public class FoodAddFragment extends Fragment {
 
     public void initSpinner() {
         List<FoodCategory> listFoodCategory = FoodCategoryRepository.getAll(getActivity());
-        FoodCategory[] array = listFoodCategory.toArray(new FoodCategory[listFoodCategory.size()]);
-        spinnerAdapter = new FoodCategorySpinnerAdapter(getActivity(), array);
+        spinnerAdapter = new FoodCategorySpinnerAdapter(getActivity(), listFoodCategory);
         spCategory.setAdapter(spinnerAdapter);
     }
 
@@ -220,6 +219,7 @@ public class FoodAddFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
+
                 String title = etTitle.getText().toString();
                 String calorie = etCalorie.getText().toString();
                 FoodCategory category = (FoodCategory) spCategory.getSelectedItem();
@@ -235,7 +235,7 @@ public class FoodAddFragment extends Fragment {
                     isSaved = true;
 
                     // Go back
-                    getActivity().getFragmentManager().beginTransaction().remove(FoodAddFragment.this).commit();
+                    getFragmentManager().popBackStack();
                 }
 
             }

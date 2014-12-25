@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
+import java.util.List;
 
 import ch.hesso.master.caldynam.R;
 import ch.hesso.master.caldynam.database.Food;
@@ -18,9 +19,9 @@ import ch.hesso.master.caldynam.util.ImageUtils;
 
 public class FoodAdapter extends ArrayAdapter<Food> {
     private final Context context;
-    private final Food[] values;
+    private final List<Food> values;
 
-    public FoodAdapter(Context context, Food[] values) {
+    public FoodAdapter(Context context, List<Food> values) {
         super(context, R.layout.list_row_food, values);
         this.context = context;
         this.values = values;
@@ -35,7 +36,7 @@ public class FoodAdapter extends ArrayAdapter<Food> {
         TextView tvDescription = (TextView) rowView.findViewById(R.id.tv_description);
         ImageView ivIcon = (ImageView) rowView.findViewById(R.id.iv_icon);
 
-        Food food = values[position];
+        Food food = values.get(position);
         tvTitle.setText(food.getName());
         tvDescription.setText(food.getCalorie() + " calories");
 
@@ -47,5 +48,10 @@ public class FoodAdapter extends ArrayAdapter<Food> {
         }
 
         return rowView;
+    }
+
+    public void setData(List<Food> listFood) {
+        this.clear();
+        this.addAll(listFood);
     }
 }

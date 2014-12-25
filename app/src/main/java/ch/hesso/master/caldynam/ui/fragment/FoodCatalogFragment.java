@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ch.hesso.master.caldynam.MainActivity;
@@ -100,9 +101,7 @@ public class FoodCatalogFragment extends Fragment {
     }
 
     public void initListView() {
-        List<Food> listFood = FoodRepository.getAll(getActivity());
-        Food[] array = listFood.toArray(new Food[listFood.size()]);
-        foodAdapter = new FoodAdapter(getActivity(), array);
+        foodAdapter = new FoodAdapter(getActivity(), new ArrayList<Food>());
         lvFood.setAdapter(foodAdapter);
         lvFood.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -119,6 +118,10 @@ public class FoodCatalogFragment extends Fragment {
         super.onResume();
 
         ((MainActivity)getActivity()).getAddButton().setVisibility(View.VISIBLE);
+
+        List<Food> listFood = FoodRepository.getAll(getActivity());
+        foodAdapter.setData(listFood);
+        foodAdapter.notifyDataSetChanged();
     }
 
     @Override
