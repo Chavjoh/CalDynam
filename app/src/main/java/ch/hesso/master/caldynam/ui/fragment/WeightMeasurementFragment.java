@@ -113,8 +113,15 @@ public class WeightMeasurementFragment extends Fragment {
         weightSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                float fWeight;
+                try {
+                    fWeight = Float.valueOf(weightValue.getText().toString());
+                }
+                catch (NumberFormatException e) {
+                    return;
+                }
                 Weight weight = new Weight();
-                weight.setWeight(Float.valueOf(weightValue.getText().toString()));
+                weight.setWeight(fWeight);
                 weight.setDate(new Date());
 
                 WeightRepository.insertOrUpdate(getActivity(), weight);
@@ -171,6 +178,7 @@ public class WeightMeasurementFragment extends Fragment {
 
     private void initializeData() {
 
+        listPoint.clear();
         for (int i = 0; i < numberOfMeasure; i++) {
             listPoint.add(new PointValue(i, 0));
         }
@@ -181,9 +189,6 @@ public class WeightMeasurementFragment extends Fragment {
         int i = numberOfMeasure - 1;
 
         List<Weight> listWeight = WeightRepository.getAllLimit(getActivity(), numberOfMeasure);
-
-        if (listWeight.size() == 0)
-            return;
 
         float sum = 0f;
 
@@ -201,20 +206,30 @@ public class WeightMeasurementFragment extends Fragment {
             sum += currentWeight;
         }
 
-        float average = sum / listWeight.size();
+        float average = 0;
+        if (listWeight.size() == 0) {
+            minWeight = 0;
+            maxWeight = 0;
+        }
+        else {
+            average = sum / listWeight.size();
+        }
+
+        float lastWeight = 0;
 
         for (Weight weight : listWeight) {
             PointValue currentPoint = listPoint.get(i);
             currentPoint.set(i, average);
             currentPoint.setTarget(i, weight.getWeight());
             currentPoint.setLabel(DateUtils.dateHourToString(weight.getDate()).toCharArray());
+            lastWeight = weight.getWeight();
             i--;
         }
 
         while (i >= 0) {
             PointValue currentPoint = listPoint.get(i);
-            currentPoint.set(i, 0);
-            currentPoint.setTarget(i, 0);
+            currentPoint.set(i, average);
+            currentPoint.setTarget(i, lastWeight);
             i--;
         }
 
@@ -245,6 +260,7 @@ public class WeightMeasurementFragment extends Fragment {
 
         if (id == R.id.action_reset) {
             WeightRepository.deleteAll(getActivity());
+            initializeData();
             refreshData();
             manageFormVisibility();
 
@@ -287,7 +303,9 @@ public class WeightMeasurementFragment extends Fragment {
 
         @Override
         public void onValueTouched(int selectedLine, int selectedValue, PointValue value) {
-            ToastUtils.toast(getActivity(), new String(value.getLabel()) + " -> " + value.getY());
+            if (value.getLabel() != null) {
+                ToastUtils.toast(getActivity(), new String(value.getLabel()) + " -> " + value.getY());
+            }
         }
 
         @Override
