@@ -31,6 +31,7 @@ import ch.hesso.master.caldynam.repository.FoodRepository;
 import ch.hesso.master.caldynam.ui.adapter.FoodCategorySpinnerAdapter;
 import ch.hesso.master.caldynam.util.DialogUtils;
 import ch.hesso.master.caldynam.util.ImageUtils;
+import ch.hesso.master.caldynam.util.LayoutUtils;
 
 public class FoodViewFragment extends Fragment {
 
@@ -81,11 +82,11 @@ public class FoodViewFragment extends Fragment {
     }
 
     private void findViews() {
-        tvName = (TextView) getView().findViewById(R.id.tv_name);
-        tvCategory = (TextView) getView().findViewById(R.id.tv_category);
-        tvCalorie = (TextView) getView().findViewById(R.id.tv_calorie);
-        ivImage = (ImageView) getView().findViewById(R.id.iv_image);
-        btnDelete = (Button) getView().findViewById(R.id.btn_delete);
+        tvName = LayoutUtils.findView(getView(), R.id.tv_name);
+        tvCategory = LayoutUtils.findView(getView(), R.id.tv_category);
+        tvCalorie = LayoutUtils.findView(getView(), R.id.tv_calorie);
+        ivImage = LayoutUtils.findView(getView(), R.id.iv_image);
+        btnDelete = LayoutUtils.findView(getView(), R.id.btn_delete);
     }
 
     private void showFood() {
@@ -175,8 +176,8 @@ public class FoodViewFragment extends Fragment {
      * activity.
      * <p/>
      * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * "http://developer.android.com/training/basics/fragments/communicating.html">
+     * Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
 

@@ -22,6 +22,7 @@ import ch.hesso.master.caldynam.repository.FoodCategoryRepository;
 import ch.hesso.master.caldynam.repository.FoodRepository;
 import ch.hesso.master.caldynam.ui.adapter.FoodAdapter;
 import ch.hesso.master.caldynam.ui.adapter.FoodCategorySpinnerAdapter;
+import ch.hesso.master.caldynam.util.LayoutUtils;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,6 +34,7 @@ import ch.hesso.master.caldynam.ui.adapter.FoodCategorySpinnerAdapter;
  *
  */
 public class FoodCatalogFragment extends Fragment {
+
     private OnFragmentInteractionListener mListener;
     private View mAddButton;
     private FoodAdapter foodAdapter;
@@ -97,7 +99,7 @@ public class FoodCatalogFragment extends Fragment {
     }
 
     public void findViews() {
-        lvFood = (ListView) getActivity().findViewById(R.id.lv_food);
+        lvFood = LayoutUtils.findView(getView(), R.id.lv_food);
     }
 
     public void initListView() {
