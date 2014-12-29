@@ -3,12 +3,39 @@ package ch.hesso.master.caldynam.ui.fragment;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.Spinner;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import ch.hesso.master.caldynam.MainActivity;
 import ch.hesso.master.caldynam.R;
+import ch.hesso.master.caldynam.database.Food;
+import ch.hesso.master.caldynam.database.FoodCategory;
+import ch.hesso.master.caldynam.database.Logging;
+import ch.hesso.master.caldynam.database.Workout;
+import ch.hesso.master.caldynam.model.LoggingAdapterModel;
+import ch.hesso.master.caldynam.repository.FoodCategoryRepository;
+import ch.hesso.master.caldynam.repository.FoodRepository;
+import ch.hesso.master.caldynam.repository.LoggingRepository;
+import ch.hesso.master.caldynam.ui.SlidingTabLayout;
+import ch.hesso.master.caldynam.ui.adapter.FoodCategorySpinnerAdapter;
+import ch.hesso.master.caldynam.ui.adapter.FoodSpinnerAdapter;
+import ch.hesso.master.caldynam.ui.adapter.LoggingAdapter;
+import ch.hesso.master.caldynam.ui.adapter.WorkoutSpinnerAdapter;
+import ch.hesso.master.caldynam.util.DateUtils;
+import me.drakeet.materialdialog.MaterialDialog;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -17,10 +44,31 @@ import ch.hesso.master.caldynam.R;
  * to handle interaction events.
  * Use the {@link LoggingFragment#newInstance} factory method to
  * create an instance of this fragment.
- *
  */
 public class LoggingFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
+
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private List<LoggingAdapterModel> mData;
+    private FragmentActivity context;
+
+    private MaterialDialog mMaterialDialog;
+    private SlidingTabLayout mSlidingTabLayout;
+    private ViewPager mViewPager;
+    private FoodAddSubviewHolder mFoodAddSubviewHolder;
+    private WorkoutAddSubviewHolder mWorkoutAddSubviewHolder;
+
+    private static class FoodAddSubviewHolder {
+        public Spinner mSpLoggingFoodCategory;
+        public Spinner mSpLoggingFood;
+    }
+
+    private static class WorkoutAddSubviewHolder {
+        public Spinner mSpLoggingWorkout;
+        public EditText mEtWorkoutQuantity;
+    }
 
     /**
      * Use this factory method to create a new instance of
@@ -45,12 +93,13 @@ public class LoggingFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_meal_logging, container, false);
+        return inflater.inflate(R.layout.fragment_logging, container, false);
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        context = (FragmentActivity) activity;
 
         try {
             mListener = (OnFragmentInteractionListener) activity;
@@ -60,6 +109,216 @@ public class LoggingFragment extends Fragment {
         }
 
         ((MainActivity) activity).onSectionAttached(R.string.section_meal_logging);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        findViews();
+        refreshData();
+    }
+
+    private void refreshData() {
+        List<Logging> loggings = LoggingRepository.getToday(getActivity(), new Date());
+        mData.clear();
+        mData.add(new LoggingAdapterModel.LoggingAdapterModelTitle(getString(R.string.morning)));
+        mData.add(new LoggingAdapterModel.LoggingAdapterModelAdd(getString(R.string.add_recipe_workout), new LoggingAdapterModel.LoggingAdapterModelAdd.LoggingAdapterModelAddCallback() {
+            @Override
+            public void onClick() {
+                addItem(DateUtils.DAY_PARTING.MORNING);
+            }
+        }));
+        mData.add(new LoggingAdapterModel.LoggingAdapterModelTitle(getString(R.string.daytime)));
+        mData.add(new LoggingAdapterModel.LoggingAdapterModelAdd(getString(R.string.add_recipe_workout), new LoggingAdapterModel.LoggingAdapterModelAdd.LoggingAdapterModelAddCallback() {
+            @Override
+            public void onClick() {
+                addItem(DateUtils.DAY_PARTING.DAYTIME);
+            }
+        }));
+        mData.add(new LoggingAdapterModel.LoggingAdapterModelTitle(getString(R.string.evening)));
+        mData.add(new LoggingAdapterModel.LoggingAdapterModelAdd(getString(R.string.add_recipe_workout), new LoggingAdapterModel.LoggingAdapterModelAdd.LoggingAdapterModelAddCallback() {
+            @Override
+            public void onClick() {
+                addItem(DateUtils.DAY_PARTING.EVENING);
+            }
+        }));
+        int indexMorning = 2;
+        int indexDay = 4;
+
+        for (final Logging logging : loggings) {
+            DateUtils.DAY_PARTING dayParting = DateUtils.dayParting(logging.getDate());
+            LoggingAdapterModel loggingAdapter = new LoggingAdapterModel.LoggingAdapterModelItem(logging, new LoggingAdapterModel.LoggingAdapterModelItem.LoggingAdapterModelItemDeleteCallback() {
+                @Override
+                public void onClick() {
+                    LoggingRepository.delete(getActivity(), logging.getId());
+                    refreshData();
+                }
+            });
+            if (dayParting == DateUtils.DAY_PARTING.MORNING) {
+                mData.add(indexMorning, loggingAdapter);
+            } else if (dayParting == DateUtils.DAY_PARTING.DAYTIME) {
+                mData.add(indexDay, loggingAdapter);
+            } else {
+                mData.add(loggingAdapter);
+            }
+            indexMorning++;
+            indexDay++;
+        }
+        mAdapter.notifyDataSetChanged();
+    }
+
+    private void addItem(final DateUtils.DAY_PARTING dayParting) {
+        View contentView = LayoutInflater.from(getActivity())
+                .inflate(R.layout.fragment_logging_add_dialog, null);
+        mViewPager = (ViewPager) contentView.findViewById(R.id.pager_logging_fragment);
+
+        mViewPager.setAdapter(getViewPagerAdapter());
+        mSlidingTabLayout = (SlidingTabLayout) contentView.findViewById(R.id.sliding_tabs);
+        mSlidingTabLayout.setViewPager(mViewPager);
+
+        mMaterialDialog = new MaterialDialog(getActivity())
+                .setTitle(getString(R.string.add_recipe_workout))
+                .setContentView(contentView)
+                .setPositiveButton(getString(R.string.add), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (createItem(dayParting)) {
+                            mMaterialDialog.dismiss();
+                            LoggingFragment.this.refreshData();
+                        }
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mMaterialDialog.dismiss();
+                    }
+                });
+        mMaterialDialog.show();
+    }
+
+    private boolean createItem(DateUtils.DAY_PARTING dayParting) {
+        boolean isFood = mViewPager.getCurrentItem() == 0;
+        if (isFood) {
+            Food food = (Food) mFoodAddSubviewHolder.mSpLoggingFood.getSelectedItem();
+            if (food != null) {
+                Date date = DateUtils.todayDayParting(dayParting);
+                Logging logging = new Logging(null, date, food.getId(), null);
+                LoggingRepository.insertOrUpdate(getActivity(), logging);
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            Workout workout = (Workout) mWorkoutAddSubviewHolder.mSpLoggingWorkout.getSelectedItem();
+            float quantity = -1;
+            try {
+                quantity = Float.parseFloat(mWorkoutAddSubviewHolder.mEtWorkoutQuantity.getText().toString());
+            } catch (NumberFormatException e) {
+                // Nothing now
+            }
+            if (workout != null && quantity > 0) {
+                Date date = DateUtils.todayDayParting(dayParting);
+                Logging logging = new Logging(null, date, null, workout.getId());
+                LoggingRepository.insertOrUpdate(getActivity(), logging);
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    private PagerAdapter getViewPagerAdapter() {
+        return new PagerAdapter() {
+            @Override
+            public int getCount() {
+                return 2;
+            }
+
+            @Override
+            public boolean isViewFromObject(View view, Object object) {
+                return view == object;
+            }
+
+            @Override
+            public Object instantiateItem(ViewGroup container, int position) {
+                View view = getAddDialogSubview(container, position);
+                container.addView(view);
+                return view;
+            }
+
+            @Override
+            public void destroyItem(ViewGroup container, int position, Object object) {
+                container.removeView((View) object);
+            }
+
+            @Override
+            public CharSequence getPageTitle(int position) {
+                int title = position == 0 ? R.string.food : R.string.workout;
+                return getString(title);
+            }
+        };
+    }
+
+    private View getAddDialogSubview(ViewGroup container, int position) {
+        boolean isFood = position == 0;
+        int ressource = isFood ? R.layout.fragment_logging_add_food_dialog : R.layout.fragment_logging_add_workout_dialog;
+        View view = LayoutInflater.from(getActivity())
+                .inflate(ressource, container, false);
+
+        if (isFood) {
+            mFoodAddSubviewHolder = new FoodAddSubviewHolder();
+            mFoodAddSubviewHolder.mSpLoggingFoodCategory = (Spinner) view.findViewById(R.id.sp_logging_food_category);
+            mFoodAddSubviewHolder.mSpLoggingFood = (Spinner) view.findViewById(R.id.sp_logging_food);
+
+            List<FoodCategory> listFoodCategory = FoodCategoryRepository.getAll(getActivity());
+            final List<Food> listFood = new ArrayList<>();
+            FoodCategorySpinnerAdapter foodCategorySpinnerAdapter = new FoodCategorySpinnerAdapter(getActivity(), listFoodCategory);
+            FoodSpinnerAdapter foodSpinnerAdapter = new FoodSpinnerAdapter(getActivity(), listFood);
+            mFoodAddSubviewHolder.mSpLoggingFoodCategory.setAdapter(foodCategorySpinnerAdapter);
+            mFoodAddSubviewHolder.mSpLoggingFood.setAdapter(foodSpinnerAdapter);
+
+            mFoodAddSubviewHolder.mSpLoggingFoodCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    FoodCategory category = (FoodCategory) mFoodAddSubviewHolder.mSpLoggingFoodCategory.getSelectedItem();
+                    listFood.clear();
+                    listFood.addAll(FoodRepository.getAll(getActivity(), category));
+                    ((FoodSpinnerAdapter) mFoodAddSubviewHolder.mSpLoggingFood.getAdapter()).notifyDataSetChanged();
+                    mFoodAddSubviewHolder.mSpLoggingFood.setVisibility(listFood.size() > 0 ? View.VISIBLE : View.GONE);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) { /* Nothing */ }
+            });
+        } else {
+            mWorkoutAddSubviewHolder = new WorkoutAddSubviewHolder();
+            mWorkoutAddSubviewHolder.mSpLoggingWorkout = (Spinner) view.findViewById(R.id.sp_logging_workout);
+            mWorkoutAddSubviewHolder.mEtWorkoutQuantity = (EditText) view.findViewById(R.id.et_workout_quantity);
+            List<FoodCategory> listFoodCategory = FoodCategoryRepository.getAll(getActivity());
+            List<Workout> listWorkout = new ArrayList<>();
+            WorkoutSpinnerAdapter workoutSpinnerAdapter = new WorkoutSpinnerAdapter(getActivity(), listWorkout);
+            mWorkoutAddSubviewHolder.mSpLoggingWorkout.setAdapter(workoutSpinnerAdapter);
+        }
+        return view;
+    }
+
+    public void findViews() {
+        mRecyclerView = (RecyclerView) getActivity().findViewById(R.id.logging_recycler_view);
+
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        mRecyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        // specify an adapter (see also next example)
+        mData = new ArrayList<>();
+        mAdapter = new LoggingAdapter(getActivity(), mData);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
