@@ -8,12 +8,15 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.TimePicker;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,6 +32,7 @@ import ch.hesso.master.caldynam.model.LoggingAdapterModel;
 import ch.hesso.master.caldynam.repository.FoodCategoryRepository;
 import ch.hesso.master.caldynam.repository.FoodRepository;
 import ch.hesso.master.caldynam.repository.LoggingRepository;
+import ch.hesso.master.caldynam.repository.WorkoutRepository;
 import ch.hesso.master.caldynam.ui.SlidingTabLayout;
 import ch.hesso.master.caldynam.ui.adapter.FoodCategorySpinnerAdapter;
 import ch.hesso.master.caldynam.ui.adapter.FoodSpinnerAdapter;
@@ -68,6 +72,7 @@ public class LoggingFragment extends Fragment {
     private static class WorkoutAddSubviewHolder {
         public Spinner mSpLoggingWorkout;
         public EditText mEtWorkoutQuantity;
+        public TimePicker mTpWorkoutQuantity;
     }
 
     /**
@@ -114,9 +119,15 @@ public class LoggingFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         findViews();
         refreshData();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        toolbar.setTitle(toolbar.getTitle() + " - " + DateUtils.dateToString(new Date()));
     }
 
     private void refreshData() {
@@ -296,10 +307,30 @@ public class LoggingFragment extends Fragment {
             mWorkoutAddSubviewHolder = new WorkoutAddSubviewHolder();
             mWorkoutAddSubviewHolder.mSpLoggingWorkout = (Spinner) view.findViewById(R.id.sp_logging_workout);
             mWorkoutAddSubviewHolder.mEtWorkoutQuantity = (EditText) view.findViewById(R.id.et_workout_quantity);
-            List<FoodCategory> listFoodCategory = FoodCategoryRepository.getAll(getActivity());
-            List<Workout> listWorkout = new ArrayList<>();
+            mWorkoutAddSubviewHolder.mTpWorkoutQuantity = (TimePicker) view.findViewById(R.id.tp_workout_quantity);
+            mWorkoutAddSubviewHolder.mTpWorkoutQuantity.setIs24HourView(true);
+            mWorkoutAddSubviewHolder.mTpWorkoutQuantity.setCurrentHour(1);
+            mWorkoutAddSubviewHolder.mTpWorkoutQuantity.setCurrentMinute(0);
+            List<Workout> listWorkout = WorkoutRepository.getAll(getActivity());
             WorkoutSpinnerAdapter workoutSpinnerAdapter = new WorkoutSpinnerAdapter(getActivity(), listWorkout);
             mWorkoutAddSubviewHolder.mSpLoggingWorkout.setAdapter(workoutSpinnerAdapter);
+            mWorkoutAddSubviewHolder.mSpLoggingWorkout.setOnItemSelectedListener( new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    Workout workout = (Workout) mWorkoutAddSubviewHolder.mSpLoggingWorkout.getSelectedItem();
+                    if (workout.getCalorie() == 1) {
+                        mWorkoutAddSubviewHolder.mTpWorkoutQuantity.setVisibility(View.GONE);
+                        mWorkoutAddSubviewHolder.mEtWorkoutQuantity.setVisibility(View.VISIBLE);
+                    }
+                    else {
+                        mWorkoutAddSubviewHolder.mTpWorkoutQuantity.setVisibility(View.VISIBLE);
+                        mWorkoutAddSubviewHolder.mEtWorkoutQuantity.setVisibility(View.GONE);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) { /* Nothing */ }
+            });
         }
         return view;
     }

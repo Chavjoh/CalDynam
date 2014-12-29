@@ -32,7 +32,7 @@ public class LoggingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         public TitleViewHolder(View rootView) {
             super(rootView);
-            mTextView = (TextView) rootView.findViewById(R.id.tv_meal_logging_title);
+            mTextView = (TextView) rootView.findViewById(R.id.tv_logging_title_row);
         }
     }
 
@@ -41,7 +41,7 @@ public class LoggingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         public AddViewHolder(View rootView) {
             super(rootView);
-            mAddButton = (Button) rootView.findViewById(R.id.btn_meal_logging_add);
+            mAddButton = (Button) rootView.findViewById(R.id.btn_logging_add);
         }
     }
 
@@ -54,11 +54,11 @@ public class LoggingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         public ItemViewHolder(View rootView) {
             super(rootView);
-            mName = (TextView) rootView.findViewById(R.id.tv_meal_logging_item_name);
-            mCalories = (TextView) rootView.findViewById(R.id.tv_meal_logging_item_calories);
-            mDeleteButton = (Button) rootView.findViewById(R.id.btn_meal_logging_item_delete);
-            mItemIcon = (ImageView) rootView.findViewById(R.id.iv_meal_logging_item_icon);
-            mCalorieIcon = (ImageView) rootView.findViewById(R.id.iv_meal_logging_item_calorie_icon);
+            mName = (TextView) rootView.findViewById(R.id.tv_logging_item_name);
+            mCalories = (TextView) rootView.findViewById(R.id.tv_logging_item_calories);
+            mDeleteButton = (Button) rootView.findViewById(R.id.btn_logging_item_delete);
+            mItemIcon = (ImageView) rootView.findViewById(R.id.iv_logging_item_icon);
+            mCalorieIcon = (ImageView) rootView.findViewById(R.id.iv_logging_item_calorie_icon);
         }
     }
 

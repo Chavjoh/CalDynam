@@ -9,9 +9,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <android.support.v4.view.ViewPager
+    <ch.hesso.master.caldynam.ui.WrapContentViewPager
         android:id="@+id/pager_logging_fragment"
         android:layout_width="fill_parent"
-        android:layout_height="70dp"
+        android:layout_height="wrap_content"
         android:background="@android:color/white" />
 </LinearLayout>

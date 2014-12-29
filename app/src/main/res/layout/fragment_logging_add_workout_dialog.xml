@@ -14,5 +14,10 @@
         android:layout_height="wrap_content"
         android:inputType="number"
         android:ems="10"
-        android:hint="distance in km"/>
+        android:hint="calories quantity"/>
+
+    <TimePicker
+        android:id="@+id/tp_workout_quantity"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
 </LinearLayout>
