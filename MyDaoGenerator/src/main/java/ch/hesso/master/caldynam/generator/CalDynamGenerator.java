@@ -36,6 +36,7 @@ public class CalDynamGenerator {
         workout.addIdProperty().autoincrement();
         workout.addStringProperty("name").notNull().indexAsc(null, false);
         workout.addIntProperty("calorie").notNull();
+        workout.addIntProperty("image").notNull();
 
         /**
          * WEIGHT
@@ -55,6 +56,7 @@ public class CalDynamGenerator {
         logging.addToOne(food, foodId);
         Property workoutId = logging.addLongProperty("workoutId").index().getProperty();
         logging.addToOne(workout, workoutId);
+        logging.addFloatProperty("quantity");
 
 
         new DaoGenerator().generateAll(schema, args[0]);

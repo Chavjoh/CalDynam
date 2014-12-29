@@ -38,10 +38,10 @@ public class WorkoutRepository {
 
     public static void populate(final Context context) {
         List<Workout> listWorkout = new ArrayList<Workout>() {{
-            add(new Workout(null, context.getString(R.string.Walking), 500));
-            add(new Workout(null, context.getString(R.string.Running), 900));
-            add(new Workout(null, context.getString(R.string.Cycling), 400));
-            add(new Workout(null, context.getString(R.string.Other), 1));
+            add(new Workout(null, context.getString(R.string.Walking), 500, R.drawable.ic_walking_48dp));
+            add(new Workout(null, context.getString(R.string.Running), 900, R.drawable.ic_running_48dp));
+            add(new Workout(null, context.getString(R.string.Cycling), 400, R.drawable.ic_cycling_48dp));
+            add(new Workout(null, context.getString(R.string.Other), 1, R.drawable.ic_other_48dp));
         }};
 
         for (Workout workout : listWorkout) {

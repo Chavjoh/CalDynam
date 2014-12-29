@@ -214,7 +214,7 @@ public class LoggingFragment extends Fragment {
             Food food = (Food) mFoodAddSubviewHolder.mSpLoggingFood.getSelectedItem();
             if (food != null) {
                 Date date = DateUtils.todayDayParting(dayParting);
-                Logging logging = new Logging(null, date, food.getId(), null);
+                Logging logging = new Logging(null, date, food.getId(), null, null);
                 LoggingRepository.insertOrUpdate(getActivity(), logging);
                 return true;
             } else {
@@ -230,7 +230,7 @@ public class LoggingFragment extends Fragment {
             }
             if (workout != null && quantity > 0) {
                 Date date = DateUtils.todayDayParting(dayParting);
-                Logging logging = new Logging(null, date, null, workout.getId());
+                Logging logging = new Logging(null, date, null, workout.getId(), quantity);
                 LoggingRepository.insertOrUpdate(getActivity(), logging);
                 return true;
             } else {
