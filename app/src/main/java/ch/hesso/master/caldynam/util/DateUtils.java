@@ -3,12 +3,16 @@ package ch.hesso.master.caldynam.util;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import ch.hesso.master.caldynam.Constants;
 
 public class DateUtils {
+
+    public enum DAY_PARTING {
+        MORNING,
+        DAYTIME,
+        EVENING
+    }
 
     public static Date endOfDay(Date date) {
         Calendar calendar = Calendar.getInstance();
@@ -39,8 +43,37 @@ public class DateUtils {
         cal2.setTimeZone(Constants.TIMEZONE);
         cal1.setTime(date1);
         cal2.setTime(date2);
-        return  cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
                 cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
+    }
+
+    public static Date todayDayParting(DAY_PARTING dayParting) {
+        int hourOfDay = 6;
+        if (dayParting == DAY_PARTING.DAYTIME) {
+            hourOfDay = 12;
+        } else if (dayParting == DAY_PARTING.EVENING) {
+            hourOfDay = 18;
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeZone(Constants.TIMEZONE);
+        calendar.setTime(new Date());
+        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
+    }
+
+    public static DAY_PARTING dayParting(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeZone(Constants.TIMEZONE);
+        calendar.setTime(date);
+        if (calendar.get(Calendar.HOUR_OF_DAY) > 4 && calendar.get(Calendar.HOUR_OF_DAY) < 12) {
+            return DAY_PARTING.MORNING;
+        } else if (calendar.get(Calendar.HOUR_OF_DAY) < 18) {
+            return DAY_PARTING.DAYTIME;
+        }
+        return DAY_PARTING.EVENING;
     }
 
     public static String dateToString(Date date) {
