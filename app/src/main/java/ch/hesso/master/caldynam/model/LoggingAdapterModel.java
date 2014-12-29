@@ -65,12 +65,12 @@ public interface LoggingAdapterModel {
             mCallback = callback;
         }
 
-        public String getImage() {
-            return (mItem.getFood() != null) ? mItem.getFood().getImage() : mItem.getWorkout().getName(); // TODO: return correct image
+        public Object getImage() {
+            return (mItem.getFood() != null) ? mItem.getFood().getImage() : mItem.getWorkout().getImage();
         }
 
         public int getCalories() {
-            return (mItem.getFood() != null) ? mItem.getFood().getCalorie() : -mItem.getWorkout().getCalorie();
+            return (mItem.getFood() != null) ? mItem.getFood().getCalorie() : -(int)(mItem.getWorkout().getCalorie() * mItem.getQuantity());
         }
 
         @Override

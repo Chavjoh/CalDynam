@@ -115,12 +115,17 @@ public class LoggingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
             });
 
+            Object image = ((LoggingAdapterModel.LoggingAdapterModelItem) mData.get(position)).getImage();
+            if (image != null && image instanceof String) {
+                File imgFile = new File(context.getFilesDir(), (String) image);
 
-            File imgFile = new File(context.getFilesDir(), ((LoggingAdapterModel.LoggingAdapterModelItem) mData.get(position)).getImage());
-
-            if (imgFile.exists()) {
-                Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                ((ItemViewHolder) holder).mItemIcon.setImageBitmap(ImageUtils.getRoundedCornerBitmap(bitmap, 64));
+                if (imgFile.exists()) {
+                    Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                    ((ItemViewHolder) holder).mItemIcon.setImageBitmap(ImageUtils.getRoundedCornerBitmap(bitmap, 64));
+                }
+            }
+            else {
+                ((ItemViewHolder) holder).mItemIcon.setImageResource((int)image);
             }
 
             int calories = ((LoggingAdapterModel.LoggingAdapterModelItem) mData.get(position)).getCalories();

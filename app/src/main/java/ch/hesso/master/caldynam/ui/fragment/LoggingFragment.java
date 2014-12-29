@@ -224,7 +224,12 @@ public class LoggingFragment extends Fragment {
             Workout workout = (Workout) mWorkoutAddSubviewHolder.mSpLoggingWorkout.getSelectedItem();
             float quantity = -1;
             try {
-                quantity = Float.parseFloat(mWorkoutAddSubviewHolder.mEtWorkoutQuantity.getText().toString());
+                if (workout.getCalorie() == 1) {
+                    quantity = Float.parseFloat(mWorkoutAddSubviewHolder.mEtWorkoutQuantity.getText().toString());
+                }
+                else {
+                    quantity = mWorkoutAddSubviewHolder.mTpWorkoutQuantity.getCurrentHour() + mWorkoutAddSubviewHolder.mTpWorkoutQuantity.getCurrentMinute() / 60;
+                }
             } catch (NumberFormatException e) {
                 // Nothing now
             }
