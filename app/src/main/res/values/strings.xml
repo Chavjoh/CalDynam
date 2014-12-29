@@ -37,5 +37,9 @@
     <string name="daytime">Daytime</string>
     <string name="evening">Evening</string>
     <string name="add_recipe_workout">Add recipe/workout</string>
+    <string name="Walking">Walking</string>
+    <string name="Running">Running</string>
+    <string name="Cycling">Cycling</string>
+    <string name="Other">Other</string>
 
 </resources>

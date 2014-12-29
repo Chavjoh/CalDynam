@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import ch.hesso.master.caldynam.database.DaoMaster;
 import ch.hesso.master.caldynam.database.DaoSession;
 import ch.hesso.master.caldynam.repository.FoodCategoryRepository;
+import ch.hesso.master.caldynam.repository.WorkoutRepository;
 
 public class CalDynamApplication extends Application {
 
@@ -41,6 +42,7 @@ public class CalDynamApplication extends Application {
 
         if (!hasDatabasePopulation) {
             FoodCategoryRepository.populate(context);
+            WorkoutRepository.populate(context);
 
             SharedPreferences.Editor editor = settings.edit();
             editor.putBoolean(KEY_DATABASE_POPULATE, true);

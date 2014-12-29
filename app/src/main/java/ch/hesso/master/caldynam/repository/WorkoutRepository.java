@@ -2,9 +2,11 @@ package ch.hesso.master.caldynam.repository;
 
 import android.content.Context;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ch.hesso.master.caldynam.CalDynamApplication;
+import ch.hesso.master.caldynam.R;
 import ch.hesso.master.caldynam.database.Workout;
 import ch.hesso.master.caldynam.database.WorkoutDao;
 
@@ -32,6 +34,19 @@ public class WorkoutRepository {
 
     private static WorkoutDao getDAO(Context c) {
         return ((CalDynamApplication) c.getApplicationContext()).getDaoSession().getWorkoutDao();
+    }
+
+    public static void populate(final Context context) {
+        List<Workout> listWorkout = new ArrayList<Workout>() {{
+            add(new Workout(null, context.getString(R.string.Walking), 500));
+            add(new Workout(null, context.getString(R.string.Running), 900));
+            add(new Workout(null, context.getString(R.string.Cycling), 400));
+            add(new Workout(null, context.getString(R.string.Other), 1));
+        }};
+
+        for (Workout workout : listWorkout) {
+            insertOrUpdate(context, workout);
+        }
     }
 
 }
