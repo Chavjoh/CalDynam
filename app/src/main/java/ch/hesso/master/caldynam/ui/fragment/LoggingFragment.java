@@ -153,8 +153,8 @@ public class LoggingFragment extends Fragment {
                 addItem(DateUtils.DAY_PARTING.EVENING);
             }
         }));
-        int indexMorning = 2;
-        int indexDay = 4;
+        int indexMorning = 1;
+        int indexDay = 3;
 
         for (final Logging logging : loggings) {
             DateUtils.DAY_PARTING dayParting = DateUtils.dayParting(logging.getDate());
@@ -170,7 +170,7 @@ public class LoggingFragment extends Fragment {
             } else if (dayParting == DateUtils.DAY_PARTING.DAYTIME) {
                 mData.add(indexDay, loggingAdapter);
             } else {
-                mData.add(loggingAdapter);
+                mData.add(mData.size() - 1, loggingAdapter);
             }
             indexMorning++;
             indexDay++;
