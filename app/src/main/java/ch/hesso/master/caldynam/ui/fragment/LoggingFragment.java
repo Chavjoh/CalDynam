@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.TimePicker;
 
 import java.util.ArrayList;
@@ -33,7 +32,7 @@ import ch.hesso.master.caldynam.repository.FoodCategoryRepository;
 import ch.hesso.master.caldynam.repository.FoodRepository;
 import ch.hesso.master.caldynam.repository.LoggingRepository;
 import ch.hesso.master.caldynam.repository.WorkoutRepository;
-import ch.hesso.master.caldynam.ui.SlidingTabLayout;
+import ch.hesso.master.caldynam.ui.helper.SlidingTabLayout;
 import ch.hesso.master.caldynam.ui.adapter.FoodCategorySpinnerAdapter;
 import ch.hesso.master.caldynam.ui.adapter.FoodSpinnerAdapter;
 import ch.hesso.master.caldynam.ui.adapter.LoggingAdapter;

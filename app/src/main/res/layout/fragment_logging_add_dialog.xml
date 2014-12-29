@@ -4,12 +4,12 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <ch.hesso.master.caldynam.ui.SlidingTabLayout
+    <ch.hesso.master.caldynam.ui.helper.SlidingTabLayout
         android:id="@+id/sliding_tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <ch.hesso.master.caldynam.ui.WrapContentViewPager
+    <ch.hesso.master.caldynam.ui.helper.WrapContentViewPager
         android:id="@+id/pager_logging_fragment"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

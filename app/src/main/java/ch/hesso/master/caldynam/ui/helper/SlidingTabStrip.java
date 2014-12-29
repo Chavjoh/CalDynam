@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ch.hesso.master.caldynam.ui;
+package ch.hesso.master.caldynam.ui.helper;
 
 import android.R;
 import android.content.Context;

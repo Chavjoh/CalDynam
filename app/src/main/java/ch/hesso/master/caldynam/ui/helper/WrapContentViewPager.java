@@ -1,4 +1,4 @@
-package ch.hesso.master.caldynam.ui;
+package ch.hesso.master.caldynam.ui.helper;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;
