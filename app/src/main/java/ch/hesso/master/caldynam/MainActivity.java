@@ -120,11 +120,13 @@ public class MainActivity extends ActionBarActivity implements
     };
 
     public void onSectionAttached(int resourceId) {
-        mTitle = getString(resourceId);
+        mTitle = (resourceId != 0) ? getString(resourceId) : null;
     }
 
     public void updateToolbar() {
-        mToolbar.setTitle(mTitle);
+        if (mTitle != null) {
+            mToolbar.setTitle(mTitle);
+        }
         resizeToolbar(mNavigationDrawerFragment.isToolbarLarge() ? 1.0f : 0.0f);
         mFabButton.setAlpha(mNavigationDrawerFragment.isFABVisible()  ? 1.0f : 0.0f);
     }

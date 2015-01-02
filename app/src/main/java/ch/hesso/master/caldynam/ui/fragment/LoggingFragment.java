@@ -114,7 +114,7 @@ public class LoggingFragment extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
 
-        ((MainActivity) activity).onSectionAttached(R.string.section_meal_logging);
+        ((MainActivity) activity).onSectionAttached(0); // Use 0 to set the title here.
     }
 
     @Override
@@ -128,14 +128,13 @@ public class LoggingFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-        toolbar.setTitle(toolbar.getTitle() + " - " + DateUtils.dateToString(new Date()));
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.logging, menu);
+        updateTitle();
     }
 
     @Override
@@ -153,6 +152,7 @@ public class LoggingFragment extends Fragment {
                             calendar.set(year, monthOfYear, dayOfMonth);
                             mDate.setTime(calendar.getTimeInMillis());
                             refreshData();
+                            updateTitle();
                         }
                     },
                     calendar.get(Calendar.YEAR),
@@ -391,6 +391,11 @@ public class LoggingFragment extends Fragment {
         mData = new ArrayList<>();
         mAdapter = new LoggingAdapter(getActivity(), mData);
         recyclerView.setAdapter(mAdapter);
+    }
+
+    private void updateTitle() {
+        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        toolbar.setTitle(getActivity().getString(R.string.section_meal_logging) + " - " + DateUtils.dateToString(mDate));
     }
 
     @Override
