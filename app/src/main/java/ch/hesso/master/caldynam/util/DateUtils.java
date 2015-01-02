@@ -47,7 +47,7 @@ public class DateUtils {
                 cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
     }
 
-    public static Date todayDayParting(DAY_PARTING dayParting) {
+    public static Date dateWithDayParting(Date date, DAY_PARTING dayParting) {
         int hourOfDay = 6;
         if (dayParting == DAY_PARTING.DAYTIME) {
             hourOfDay = 12;
@@ -56,12 +56,16 @@ public class DateUtils {
         }
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeZone(Constants.TIMEZONE);
-        calendar.setTime(new Date());
+        calendar.setTime(date);
         calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getTime();
+    }
+
+    public static Date todayDayParting(DAY_PARTING dayParting) {
+        return dateWithDayParting(new Date(), dayParting);
     }
 
     public static DAY_PARTING dayParting(Date date) {
