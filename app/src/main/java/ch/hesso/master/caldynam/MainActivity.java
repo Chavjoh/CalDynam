@@ -9,6 +9,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +26,7 @@ import ch.hesso.master.caldynam.ui.fragment.LoggingFragment;
 import ch.hesso.master.caldynam.ui.fragment.NavigationDrawerFragment;
 import ch.hesso.master.caldynam.ui.fragment.SummaryFragment;
 import ch.hesso.master.caldynam.ui.fragment.WeightMeasurementFragment;
+import me.drakeet.materialdialog.MaterialDialog;
 
 public class MainActivity extends ActionBarActivity implements
         NavigationDrawerFragment.NavigationDrawerCallbacks,
@@ -163,7 +165,7 @@ public class MainActivity extends ActionBarActivity implements
         fragment.onOptionsItemSelected(item);
 
         if (id == R.id.action_about) {
-            Toast.makeText(this, "ABOUT", Toast.LENGTH_SHORT).show();
+            showAboutDialog();
             return true;
         }
 
@@ -181,6 +183,21 @@ public class MainActivity extends ActionBarActivity implements
             Log.d(Constants.PROJECT_NAME, "Nothing on backstack, calling super");
             super.onBackPressed();
         }
+    }
+
+    private void showAboutDialog() {
+        View contentView = LayoutInflater.from(this)
+                .inflate(R.layout.fragment_about_dialog, null);
+        final MaterialDialog aboutDialog = new MaterialDialog(this);
+        aboutDialog
+                .setContentView(contentView)
+                .setPositiveButton(getString(R.string.ok), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        aboutDialog.dismiss();
+                    }
+                });
+        aboutDialog.show();
     }
 
     public Fragment getActiveFragment() {
