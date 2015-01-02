@@ -42,4 +42,13 @@
     <string name="cycling">Cycling</string>
     <string name="other">Other</string>
     <string name="change_date">Change date</string>
+    <string name="cal">Calories</string>
+    <string name="edit_profile">Edit profile</string>
+    <string name="weight_goal">Weight goal (kg)</string>
+    <string name="workout_goal">Workout goal (kcal)</string>
+    <string name="food_goal">Food goal (kcal)</string>
+    <string name="no_weight_info">No weight logged! Add your weight in the dedicated view.</string>
+    <string name="need_lose_weight_info">Your current weight is %1$.1fkg and your objective is %2$.1fkg\nYou need to lose %3$.1fkg</string>
+    <string name="need_take_weight_info">Your current weight is %1$.1fkg and your objective is %2$.1fkg\nYou need to take %3$.1fkg</string>
+    <string name="perfect_weight">Your current weight is %1$.1fkg!\nPerfect!</string>
 </resources>
