@@ -176,6 +176,7 @@ public class NavigationDrawerFragment extends Fragment {
                 View fab = getActivity().findViewById(R.id.fab_button);
                 if (FragmentInfoHolder.FRAGMENT_INFO_HOLDERS[mCurrentSelectedPosition].isFABVisible()) {
                     fab.setAlpha(1.0f - slideOffset);
+                    fab.setClickable(fab.getAlpha() >= 1.0f);
                     fab.setX(
                             getResources().getDimension(R.dimen.activity_horizontal_margin) +
                             NavigationDrawerFragment.this.mFragmentContainerView.getLayoutParams().width * slideOffset
@@ -183,6 +184,7 @@ public class NavigationDrawerFragment extends Fragment {
                 }
                 else {
                     fab.setAlpha(0.0f);
+                    fab.setClickable(false);
                 }
                 if (FragmentInfoHolder.FRAGMENT_INFO_HOLDERS[mCurrentSelectedPosition].isLargeToolbar()) {
                     ((MainActivity)getActivity()).resizeToolbar(1.0f - slideOffset);
