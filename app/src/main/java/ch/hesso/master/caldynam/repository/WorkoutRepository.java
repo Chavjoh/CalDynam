@@ -38,9 +38,13 @@ public class WorkoutRepository {
 
     public static void populate(final Context context) {
         List<Workout> listWorkout = new ArrayList<Workout>() {{
-            add(new Workout(null, context.getString(R.string.walking), 500, R.drawable.ic_walking_48dp));
-            add(new Workout(null, context.getString(R.string.running), 900, R.drawable.ic_running_48dp));
-            add(new Workout(null, context.getString(R.string.cycling), 400, R.drawable.ic_cycling_48dp));
+            // Calories is for 60min and 100kg person
+            // Date from http://www.tabledescalories.com/calories-brulees.html
+            add(new Workout(null, context.getString(R.string.walking), 714, R.drawable.ic_walking_48dp));
+            add(new Workout(null, context.getString(R.string.running), 1322, R.drawable.ic_running_48dp));
+            add(new Workout(null, context.getString(R.string.cycling), 595, R.drawable.ic_cycling_48dp));
+            add(new Workout(null, context.getString(R.string.tennis), 661, R.drawable.ic_tennis_48dp));
+            add(new Workout(null, context.getString(R.string.swimming), 939, R.drawable.ic_swimming_48dp));
             add(new Workout(null, context.getString(R.string.other), 1, R.drawable.ic_other_48dp));
         }};
 

@@ -32,11 +32,13 @@ import ch.hesso.master.caldynam.R;
 import ch.hesso.master.caldynam.database.Food;
 import ch.hesso.master.caldynam.database.FoodCategory;
 import ch.hesso.master.caldynam.database.Logging;
+import ch.hesso.master.caldynam.database.Weight;
 import ch.hesso.master.caldynam.database.Workout;
 import ch.hesso.master.caldynam.model.LoggingAdapterModel;
 import ch.hesso.master.caldynam.repository.FoodCategoryRepository;
 import ch.hesso.master.caldynam.repository.FoodRepository;
 import ch.hesso.master.caldynam.repository.LoggingRepository;
+import ch.hesso.master.caldynam.repository.WeightRepository;
 import ch.hesso.master.caldynam.repository.WorkoutRepository;
 import ch.hesso.master.caldynam.ui.adapter.FoodCategorySpinnerAdapter;
 import ch.hesso.master.caldynam.ui.adapter.FoodSpinnerAdapter;
@@ -255,6 +257,7 @@ public class LoggingFragment extends Fragment {
                 LoggingRepository.insertOrUpdate(getActivity(), logging);
                 return true;
             } else {
+                // TODO: Error value entered
                 return false;
             }
         } else {
@@ -265,7 +268,14 @@ public class LoggingFragment extends Fragment {
                     quantity = Float.parseFloat(mWorkoutAddSubviewHolder.mEtWorkoutQuantity.getText().toString());
                 }
                 else {
+                    Weight lastWeight = WeightRepository.getLast(getActivity());
+                    if (lastWeight == null) {
+                        // TODO: Error no weight set
+                        return false;
+                    }
+                    float weightRatio = lastWeight.getWeight() / 100;
                     quantity = mWorkoutAddSubviewHolder.mTpWorkoutQuantity.getCurrentHour() + mWorkoutAddSubviewHolder.mTpWorkoutQuantity.getCurrentMinute() / 60.0f;
+                    quantity *= weightRatio;
                 }
             } catch (NumberFormatException e) {
                 // Nothing now
@@ -276,6 +286,7 @@ public class LoggingFragment extends Fragment {
                 LoggingRepository.insertOrUpdate(getActivity(), logging);
                 return true;
             } else {
+                // TODO: Error value entered
                 return false;
             }
         }

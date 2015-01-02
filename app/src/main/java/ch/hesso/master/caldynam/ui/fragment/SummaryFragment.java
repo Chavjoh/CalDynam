@@ -104,9 +104,9 @@ public class SummaryFragment extends Fragment {
     }
 
     private void setupWeightInfo() {
-        List<Weight> weights = WeightRepository.getAllLimit(getActivity(), 1);
-        if (weights.size() > 0) {
-            float weight = weights.get(0).getWeight();
+        Weight lastWeight = WeightRepository.getLast(getActivity());
+        if (lastWeight != null) {
+            float weight = lastWeight.getWeight();
             if (Math.abs(mWeightGoal - weight) < 0.1) {
                 mTvWeight.setText(String.format(getString(R.string.perfect_weight), weight));
             }
