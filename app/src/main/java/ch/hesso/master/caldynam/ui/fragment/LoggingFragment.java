@@ -46,6 +46,7 @@ import ch.hesso.master.caldynam.ui.adapter.LoggingAdapter;
 import ch.hesso.master.caldynam.ui.adapter.WorkoutSpinnerAdapter;
 import ch.hesso.master.caldynam.ui.helper.SlidingTabLayout;
 import ch.hesso.master.caldynam.util.DateUtils;
+import ch.hesso.master.caldynam.util.ToastUtils;
 import me.drakeet.materialdialog.MaterialDialog;
 
 /**
@@ -257,7 +258,7 @@ public class LoggingFragment extends Fragment {
                 LoggingRepository.insertOrUpdate(getActivity(), logging);
                 return true;
             } else {
-                // TODO: Error value entered
+                ToastUtils.toast(getActivity(), getString(R.string.error_value_entered));
                 return false;
             }
         } else {
@@ -270,7 +271,7 @@ public class LoggingFragment extends Fragment {
                 else {
                     Weight lastWeight = WeightRepository.getLast(getActivity());
                     if (lastWeight == null) {
-                        // TODO: Error no weight set
+                        ToastUtils.toast(getActivity(), getString(R.string.error_no_weight_logged));
                         return false;
                     }
                     float weightRatio = lastWeight.getWeight() / 100;
@@ -286,7 +287,7 @@ public class LoggingFragment extends Fragment {
                 LoggingRepository.insertOrUpdate(getActivity(), logging);
                 return true;
             } else {
-                // TODO: Error value entered
+                ToastUtils.toast(getActivity(), getString(R.string.error_value_entered));
                 return false;
             }
         }
