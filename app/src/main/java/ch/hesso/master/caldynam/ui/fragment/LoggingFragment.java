@@ -265,7 +265,7 @@ public class LoggingFragment extends Fragment {
                     quantity = Float.parseFloat(mWorkoutAddSubviewHolder.mEtWorkoutQuantity.getText().toString());
                 }
                 else {
-                    quantity = mWorkoutAddSubviewHolder.mTpWorkoutQuantity.getCurrentHour() + mWorkoutAddSubviewHolder.mTpWorkoutQuantity.getCurrentMinute() / 60;
+                    quantity = mWorkoutAddSubviewHolder.mTpWorkoutQuantity.getCurrentHour() + mWorkoutAddSubviewHolder.mTpWorkoutQuantity.getCurrentMinute() / 60.0f;
                 }
             } catch (NumberFormatException e) {
                 // Nothing now
