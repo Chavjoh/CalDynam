@@ -58,4 +58,5 @@
     <string name="ok">Ok</string>
     <string name="about_authors">Alexandre Perez\nJohan Chavaillaz\nMSE - 2015</string>
     <string name="licenses">CalDynam use:\nMaterialDialog - https://github.com/drakeet/MaterialDialog\nMaterial Design icons by Google - https://github.com/google/material-design-icons\ngreenDAO - http://greendao-orm.com\nIcons from icons8 - http://icons8.com</string>
+    <string name="error_nothing_selected">You haven\'t selected a food item!</string>
 </resources>

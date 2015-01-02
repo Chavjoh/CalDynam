@@ -258,7 +258,7 @@ public class LoggingFragment extends Fragment {
                 LoggingRepository.insertOrUpdate(getActivity(), logging);
                 return true;
             } else {
-                ToastUtils.toast(getActivity(), getString(R.string.error_value_entered));
+                ToastUtils.toast(getActivity(), getString(R.string.error_nothing_selected));
                 return false;
             }
         } else {
