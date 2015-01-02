@@ -15,4 +15,8 @@
     <dimen name="minus_fab_size_2">-28dp</dimen>
     <dimen name="button_elevation">2dp</dimen>
     <dimen name="button_press_elevation">4dp</dimen>
+
+    <!-- Pie chart center text label -->
+    <dimen name="pie_chart_text1_size">32sp</dimen>
+    <dimen name="pie_chart_text2_size">16dp</dimen>
 </resources>

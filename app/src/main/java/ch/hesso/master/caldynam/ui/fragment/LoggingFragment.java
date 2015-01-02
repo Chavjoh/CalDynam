@@ -1,24 +1,30 @@
 package ch.hesso.master.caldynam.ui.fragment;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import ch.hesso.master.caldynam.MainActivity;
@@ -26,18 +32,21 @@ import ch.hesso.master.caldynam.R;
 import ch.hesso.master.caldynam.database.Food;
 import ch.hesso.master.caldynam.database.FoodCategory;
 import ch.hesso.master.caldynam.database.Logging;
+import ch.hesso.master.caldynam.database.Weight;
 import ch.hesso.master.caldynam.database.Workout;
 import ch.hesso.master.caldynam.model.LoggingAdapterModel;
 import ch.hesso.master.caldynam.repository.FoodCategoryRepository;
 import ch.hesso.master.caldynam.repository.FoodRepository;
 import ch.hesso.master.caldynam.repository.LoggingRepository;
+import ch.hesso.master.caldynam.repository.WeightRepository;
 import ch.hesso.master.caldynam.repository.WorkoutRepository;
-import ch.hesso.master.caldynam.ui.helper.SlidingTabLayout;
 import ch.hesso.master.caldynam.ui.adapter.FoodCategorySpinnerAdapter;
 import ch.hesso.master.caldynam.ui.adapter.FoodSpinnerAdapter;
 import ch.hesso.master.caldynam.ui.adapter.LoggingAdapter;
 import ch.hesso.master.caldynam.ui.adapter.WorkoutSpinnerAdapter;
+import ch.hesso.master.caldynam.ui.helper.SlidingTabLayout;
 import ch.hesso.master.caldynam.util.DateUtils;
+import ch.hesso.master.caldynam.util.ToastUtils;
 import me.drakeet.materialdialog.MaterialDialog;
 
 /**
@@ -51,14 +60,11 @@ import me.drakeet.materialdialog.MaterialDialog;
 public class LoggingFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
-    private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
     private List<LoggingAdapterModel> mData;
-    private FragmentActivity context;
+    private Date mDate;
 
     private MaterialDialog mMaterialDialog;
-    private SlidingTabLayout mSlidingTabLayout;
     private ViewPager mViewPager;
     private FoodAddSubviewHolder mFoodAddSubviewHolder;
     private WorkoutAddSubviewHolder mWorkoutAddSubviewHolder;
@@ -103,7 +109,6 @@ public class LoggingFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        context = (FragmentActivity) activity;
 
         try {
             mListener = (OnFragmentInteractionListener) activity;
@@ -112,12 +117,13 @@ public class LoggingFragment extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
 
-        ((MainActivity) activity).onSectionAttached(R.string.section_meal_logging);
+        ((MainActivity) activity).onSectionAttached(0); // Use 0 to set the title here.
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        mDate = new Date();
         findViews();
         refreshData();
     }
@@ -125,12 +131,46 @@ public class LoggingFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-        toolbar.setTitle(toolbar.getTitle() + " - " + DateUtils.dateToString(new Date()));
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.logging, menu);
+        updateTitle();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_change_date) {
+            Calendar calendar = new GregorianCalendar();
+            calendar.setTimeInMillis(mDate.getTime());
+            new DatePickerDialog(getActivity(),
+                    new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                            GregorianCalendar calendar = new GregorianCalendar();
+                            calendar.set(year, monthOfYear, dayOfMonth);
+                            mDate.setTime(calendar.getTimeInMillis());
+                            refreshData();
+                            updateTitle();
+                        }
+                    },
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH))
+                    .show();
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void refreshData() {
-        List<Logging> loggings = LoggingRepository.getToday(getActivity(), new Date());
+        List<Logging> loggings = LoggingRepository.getToday(getActivity(), mDate);
         mData.clear();
         mData.add(new LoggingAdapterModel.LoggingAdapterModelTitle(getString(R.string.morning)));
         mData.add(new LoggingAdapterModel.LoggingAdapterModelAdd(getString(R.string.add_recipe_workout), new LoggingAdapterModel.LoggingAdapterModelAdd.LoggingAdapterModelAddCallback() {
@@ -184,8 +224,8 @@ public class LoggingFragment extends Fragment {
         mViewPager = (ViewPager) contentView.findViewById(R.id.pager_logging_fragment);
 
         mViewPager.setAdapter(getViewPagerAdapter());
-        mSlidingTabLayout = (SlidingTabLayout) contentView.findViewById(R.id.sliding_tabs);
-        mSlidingTabLayout.setViewPager(mViewPager);
+        SlidingTabLayout slidingTabLayout = (SlidingTabLayout) contentView.findViewById(R.id.sliding_tabs);
+        slidingTabLayout.setViewPager(mViewPager);
 
         mMaterialDialog = new MaterialDialog(getActivity())
                 .setTitle(getString(R.string.add_recipe_workout))
@@ -213,11 +253,12 @@ public class LoggingFragment extends Fragment {
         if (isFood) {
             Food food = (Food) mFoodAddSubviewHolder.mSpLoggingFood.getSelectedItem();
             if (food != null) {
-                Date date = DateUtils.todayDayParting(dayParting);
+                Date date = DateUtils.dateWithDayParting(mDate, dayParting);
                 Logging logging = new Logging(null, date, food.getId(), null, null);
                 LoggingRepository.insertOrUpdate(getActivity(), logging);
                 return true;
             } else {
+                ToastUtils.toast(getActivity(), getString(R.string.error_value_entered));
                 return false;
             }
         } else {
@@ -228,17 +269,25 @@ public class LoggingFragment extends Fragment {
                     quantity = Float.parseFloat(mWorkoutAddSubviewHolder.mEtWorkoutQuantity.getText().toString());
                 }
                 else {
-                    quantity = mWorkoutAddSubviewHolder.mTpWorkoutQuantity.getCurrentHour() + mWorkoutAddSubviewHolder.mTpWorkoutQuantity.getCurrentMinute() / 60;
+                    Weight lastWeight = WeightRepository.getLast(getActivity());
+                    if (lastWeight == null) {
+                        ToastUtils.toast(getActivity(), getString(R.string.error_no_weight_logged));
+                        return false;
+                    }
+                    float weightRatio = lastWeight.getWeight() / 100;
+                    quantity = mWorkoutAddSubviewHolder.mTpWorkoutQuantity.getCurrentHour() + mWorkoutAddSubviewHolder.mTpWorkoutQuantity.getCurrentMinute() / 60.0f;
+                    quantity *= weightRatio;
                 }
             } catch (NumberFormatException e) {
                 // Nothing now
             }
             if (workout != null && quantity > 0) {
-                Date date = DateUtils.todayDayParting(dayParting);
+                Date date = DateUtils.dateWithDayParting(mDate, dayParting);
                 Logging logging = new Logging(null, date, null, workout.getId(), quantity);
                 LoggingRepository.insertOrUpdate(getActivity(), logging);
                 return true;
             } else {
+                ToastUtils.toast(getActivity(), getString(R.string.error_value_entered));
                 return false;
             }
         }
@@ -340,20 +389,25 @@ public class LoggingFragment extends Fragment {
     }
 
     public void findViews() {
-        mRecyclerView = (RecyclerView) getActivity().findViewById(R.id.logging_recycler_view);
+        RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.logging_recycler_view);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
-        mRecyclerView.setHasFixedSize(true);
+        recyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter (see also next example)
         mData = new ArrayList<>();
         mAdapter = new LoggingAdapter(getActivity(), mData);
-        mRecyclerView.setAdapter(mAdapter);
+        recyclerView.setAdapter(mAdapter);
+    }
+
+    private void updateTitle() {
+        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        toolbar.setTitle(getActivity().getString(R.string.section_meal_logging) + " - " + DateUtils.dateToString(mDate));
     }
 
     @Override

@@ -42,6 +42,11 @@ public class WeightRepository {
                 (DateUtils.sameDay(listResult.get(0).getDate(), new Date()));
     }
 
+    public static Weight getLast(Context context) {
+        List<Weight> listResult = getAllLimit(context, 1);
+        return listResult.size() == 0 ? null : listResult.get(0);
+    }
+
     public static List<Weight> getPeriod(Context context, Date start, Date end) {
         return getDAO(context).queryBuilder()
                 .where(WeightDao.Properties.Date.between(start, end))
