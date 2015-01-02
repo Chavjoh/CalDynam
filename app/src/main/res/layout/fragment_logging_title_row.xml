@@ -3,6 +3,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <TextView
         android:id="@+id/tv_logging_title_row"
         android:layout_width="fill_parent"
@@ -13,6 +14,7 @@
         android:singleLine="true"
         android:text="TITLE"
         android:textSize="20sp"
-        android:textColor="@color/theme_darker_gray"
-        android:background="@drawable/meal_logging_title_border"/>
+        android:background="@drawable/meal_logging_title_border"
+        style="@style/LabelStyle" />
+
 </LinearLayout>

@@ -33,9 +33,9 @@
     <string name="cancel">Cancel</string>
     <string name="food">Food</string>
     <string name="workout">Workout</string>
-    <string name="morning">Morning</string>
-    <string name="daytime">Daytime</string>
-    <string name="evening">Evening</string>
+    <string name="morning">MORNING</string>
+    <string name="daytime">DAYTIME</string>
+    <string name="evening">EVENING</string>
     <string name="add_recipe_workout">Add recipe/workout</string>
     <string name="walking">Walking</string>
     <string name="running">Running</string>
