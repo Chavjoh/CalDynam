@@ -53,6 +53,6 @@
     <string name="need_lose_weight_info">Your current weight is %1$.1fkg and your objective is %2$.1fkg\nYou need to lose %3$.1fkg</string>
     <string name="need_take_weight_info">Your current weight is %1$.1fkg and your objective is %2$.1fkg\nYou need to take %3$.1fkg</string>
     <string name="perfect_weight">Your current weight is %1$.1fkg!\nPerfect!</string>
-    <string name="error_no_weight_logged">You haven't logged any weight!</string>
+    <string name="error_no_weight_logged">You haven\'t logged any weight!</string>
     <string name="error_value_entered">The value is not correct!</string>
 </resources>
