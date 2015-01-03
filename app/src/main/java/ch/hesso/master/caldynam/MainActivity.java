@@ -111,6 +111,7 @@ public class MainActivity extends ActionBarActivity implements
                 break;
         }
 
+        getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         loadFragment(fragment, false);
     }
 
